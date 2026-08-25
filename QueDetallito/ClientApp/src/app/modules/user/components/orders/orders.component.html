@@ -1,0 +1,86 @@
+<main>
+    <div class="w-98">
+        <div class="btn-periods">
+            <button mat-flat-button color="accent" [disabled]="currentPeriod === 3" (click)="changePeriod(3)">Últimos 3 meses</button>
+            <button mat-flat-button color="accent" [disabled]="currentPeriod === 6" (click)="changePeriod(6)">Últimos 6 meses</button>
+            <button mat-flat-button color="accent" [disabled]="currentPeriod === 12" (click)="changePeriod(12)">Último año</button>
+        </div>
+
+        <table mat-table [dataSource]="dataSource" class="check-table">
+            <!-- Image -->
+            <ng-container matColumnDef="url">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let order" [ngClass]="{'thumbnail-image': (tablet | async)}">
+                    <div class="product-thumbnail">
+                        <div class="product-quantity" *ngIf="order.totalProducts > 1">+{{(order.totalProducts - 1)}}</div>
+                        <a [routerLink]="['/user/checkout', order.orderYear, order.id]" [queryParams]="{e: true}">
+                            <img alt="producto" [src]="order.urlLocation" aria-label="producto">
+                        </a>
+                    </div>
+                </td>
+            </ng-container>
+
+            <!-- Order No -->
+            <ng-container matColumnDef="orderNo">
+                <th mat-header-cell *matHeaderCellDef># Pedido</th>
+                <td mat-cell *matCellDef="let order" [ngClass]="{'title-table': (tablet | async)}">
+                    <span *ngIf="(tablet | async)">No. Pedido: </span>
+                    <a [routerLink]="['/user/checkout', order.orderYear, order.id]" [queryParams]="{e: true}">{{order.orderYear}}{{order.id}}</a>
+                </td>
+            </ng-container>
+
+            <!-- Total -->
+            <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef>Total</th>
+                <td mat-cell *matCellDef="let order">
+                    <span *ngIf="(tablet | async)" class="check-total">TOTAL:</span>
+                    <span class="check-price">{{order.totalPrice | currency}}</span>
+                </td>
+            </ng-container>
+
+            <!-- Delivery Date -->
+            <ng-container matColumnDef="deliveryDate">
+                <th mat-header-cell *matHeaderCellDef>Fecha de Entrega</th>
+                <td mat-cell *matCellDef="let order">
+                    <span *ngIf="(tablet | async)">Entrega: </span>
+                    <span>{{order.deliveryDate | date:"d MMM 'de' y"}}</span>
+                </td>
+            </ng-container>
+
+            <!-- Name Delivery -->
+            <ng-container matColumnDef="nameDelivery">
+                <th mat-header-cell *matHeaderCellDef>Enviar a</th>
+                <td mat-cell *matCellDef="let order">
+                    <span *ngIf="(tablet | async)">Enviar a: </span>
+                    <span>{{order.nameDelivery}}</span>
+                </td>
+            </ng-container>
+
+            <!-- Order Status -->
+            <ng-container matColumnDef="orderStatus">
+                <th mat-header-cell *matHeaderCellDef>Estatus</th>
+                <td mat-cell *matCellDef="let order">
+                    <span *ngIf="(tablet | async)">Estatus: </span>
+                    <span class="status">
+                        <ng-container [ngSwitch]="order.idStatus">
+                            <mat-icon *ngSwitchCase="2">cancel</mat-icon>
+                            <mat-icon *ngSwitchCase="5">credit_score</mat-icon>
+                            <mat-icon *ngSwitchCase="6">settings_suggest</mat-icon>
+                            <mat-icon *ngSwitchCase="7">local_shipping</mat-icon>
+                            <mat-icon *ngSwitchCase="8">check_circle</mat-icon>
+                        </ng-container>
+                        &nbsp;{{order.orderStatus}}
+                    </span>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayCols" [ngClass]="{ 'thead-sm': (tablet | async) }"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayCols" [ngClass]="{ 'tbody-tr-sm': (tablet | async) }"></tr>
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell">No existe información para mostrar</td>
+            </tr>
+        </table>
+
+        <mat-paginator [pageSize]="5" [pageSizeOptions]="[5,15,30]"></mat-paginator>
+    </div>
+</main>

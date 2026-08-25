@@ -1,0 +1,48 @@
+<app-carousel [delay]="6" [showArrows]="false">
+    <app-carousel-item>
+        <a routerLink="/gifts" aria-label="regalos">
+            <img class="carousel-img" alt="promocional" [src]="(mobile | async) ? 'media/promotional_130321_sm.webp' : 'media/promotional_130321.webp'">
+        </a>
+    </app-carousel-item>
+    <app-carousel-item *ngFor="let promo of promo$ | async; index as i">
+        <a [routerLink]="'/' + promo.routerName" aria-label="promo">
+            <img class="carousel-img" [alt]="'promo-'+i" [src]="(mobile | async) ? promo.urlLocationSm : promo.urlLocation">
+        </a>
+    </app-carousel-item>
+</app-carousel>
+
+<main>
+    <div class="section">
+        <h1 class="special-title"><span>Novedades</span></h1>
+        <div class="grid-wrapper">
+            <a class="item" *ngFor="let s of seasonPromos$ | async" [routerLink]="[s.routerName]">
+                <img [alt]="s.name" [src]="s.urlLocation">
+            </a>
+            <a class="item" routerLink="/gifts">
+                <img alt="all presents" [src]="'media/season_140321.webp'">
+            </a>
+        </div>
+    </div>
+
+    <div class="section">
+        <mat-divider></mat-divider>
+    </div>
+
+    <div class="section section-columns">
+        <div class="section-column">
+            <mat-icon color="accent">favorite_border</mat-icon>
+            <h2>Calidad</h2>
+            <p>Aseguramos calidad en todos nuestros productos</p>
+        </div>
+        <div class="section-column">
+            <mat-icon color="accent">local_shipping</mat-icon>
+            <h2>Envío programado</h2>
+            <p>Programa el envío de tus regalos en el día de tu preferencia</p>
+        </div>
+        <div class="section-column">
+            <mat-icon color="accent">security</mat-icon>
+            <h2>Compra segura</h2>
+            <p>Todas tus compras se realizan de manera segura al pagar con tarjeta</p>
+        </div>
+    </div>
+</main>

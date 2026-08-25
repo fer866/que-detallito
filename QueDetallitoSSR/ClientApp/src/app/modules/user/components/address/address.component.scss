@@ -1,0 +1,30 @@
+h3 {
+    font-size: 1.17em !important;
+    font-weight: 600 !important;
+}
+.add {
+    margin-top: 8px;
+}
+.edit {
+    button {
+        &:not(:first-child) {
+            margin-left: 8px;
+        }
+    }
+}
+.abs {
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    color: var(--primary);
+    font-size: 24px !important;
+}
+.map {
+    height: 400px;
+    @media only screen and (max-width: 600px) {
+        height: 400px;
+    }
+}
+.no-map {
+    height: 100%;
+}

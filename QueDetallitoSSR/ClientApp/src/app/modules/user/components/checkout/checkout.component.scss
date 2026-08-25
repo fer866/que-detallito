@@ -1,0 +1,130 @@
+.radio-group {
+    display: flex;
+    flex-direction: row;
+    margin: 12px 0;
+    flex-wrap: wrap;
+}
+.radio-btn {
+    margin: 8px;
+    font-size: 18px;
+}
+.btn-right {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    button {
+        &:not(:first-child) {
+            margin-left: 8px;
+        }
+    }
+}
+.error-form {
+    font-size: 14px;
+    color: var(--warn);
+}
+
+.check-table {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.thead-sm {
+    display: none;
+}
+.tbody-tr-sm {
+    position: relative;
+    display: block;
+    padding: 20px 12px 100px 120px;
+    margin-bottom: 25px;
+    td.thumbnail-image {
+        position: absolute;
+        top: 20px;
+        left: 12px;
+        padding: 0;
+        border-bottom-style: none;
+    }
+    td.title-table {
+        justify-content: flex-start;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    td.action-table {
+        position: absolute;
+        top: 0;
+        right: 12px;
+        border-bottom-style: none;
+    }
+    td {
+        display: flex;
+        justify-content: flex-end;
+        padding: 7px 0 !important;
+    }
+}
+.product-thumbnail {
+    display: block;
+    max-width: 130px;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    @media only screen and (max-width: 992px) {
+        max-width: 100px;
+    }
+    @media only screen and (max-width: 600px) {
+        max-width: 80px;
+    }
+    img {
+        width: 100%;
+    }
+}
+.check-price {
+    color: var(--warn);
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 500;
+}
+.check-total {
+    color: var(--foreground);
+    font-weight: 600;
+    line-height: 1.2;
+    font-size: 16px;
+    margin-right: 12px;
+}
+.cart-coupon {
+    @media only screen and (max-width: 600px) {
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        border: 2px dashed #414141;
+    }
+}
+.coupon-form {
+    display: inline-block;
+    mat-form-field {
+        margin-right: 18px;
+    }
+}
+.subtotal-section {
+    padding: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.3em;
+    font-weight: 600;
+    color: var(--foreground);
+    span {
+        color: var(--warn);
+    }
+    &.total {
+        font-weight: 800;
+    }
+}
+.section-checkout {
+    width: 98%;
+    margin: 0 0 40px;
+    @media only screen and (max-width: 600px) {
+        margin: 0 0 25px;
+        width: 100%;
+    }
+}
+main {
+    @media only screen and (max-width: 600px) {
+        padding: 16px 8px;
+    }
+}

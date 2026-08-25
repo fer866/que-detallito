@@ -1,0 +1,74 @@
+<header class="header-medium" aria-label="Inicio">
+    <div class="header-section">
+        <div class="header-headline">
+            <h1>Regalos</h1>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="section row-flex">
+        <div class="col l3 hide-on-med-and-down">
+            <ng-container *ngIf="!(tablet | async)">
+                <app-filter-product></app-filter-product>
+            </ng-container>
+        </div>
+        <div class="col s12 m12 l9">
+            <!-- Breadcrumbs -->
+            <div class="breadcrumbs-section">
+                <div class="breadcrumbs-wrap">
+                    <nav class="breadcrumbs-nav">
+                        <a routerLink="/home" aria-label="inicio">Inicio</a>
+                        <span class="breadcrumb-last">Regalos</span>
+                    </nav>
+                </div>
+                <div>
+                    <span>Mostrando {{getTotalFiltered((products | filterCategory:filters.category | filterProduct:filters.search | filterPrice:filters.minPrice:filters.maxPrice))}} resultados</span>
+                </div>
+            </div>
+            <!-- Filters -->
+            <div class="filter-section">
+                <div *ngIf="(tablet | async)">
+                    <button mat-flat-button color="accent" aria-label="mostrar filtros" (click)="toggleOptionsSidenav()">
+                        <mat-icon>filter_alt</mat-icon> Filtrar y ordenar
+                    </button>
+                </div>
+                <div>
+                    <mat-chip-list aria-label="filtros">
+                        <mat-chip *ngFor="let sel of filterSelected | async" [removable]="true" (removed)="removeFilterChip(sel.key || 'search')">
+                            <ng-container [ngSwitch]="sel.key">
+                                <span *ngSwitchCase="'search'">Búsqueda: {{sel.value}}</span>
+                                <span *ngSwitchCase="'minPrice'">Precio mínimo: {{sel.value | currency}}</span>
+                                <span *ngSwitchCase="'maxPrice'">Precio máximo: {{sel.value | currency}}</span>
+                                <span *ngSwitchCase="'category'">Categoría: {{sel.value}}</span>
+                                <ng-container *ngSwitchCase="'order'" [ngSwitch]="sel.value">
+                                    <span *ngSwitchCase="'priceAsc'">Más baratos primero</span>
+                                    <span *ngSwitchCase="'priceDes'">Más caros primero</span>
+                                    <span *ngSwitchCase="'nameAsc'">Por nombre A-Z</span>
+                                    <span *ngSwitchCase="'nameDes'">Por nombre Z-A</span>
+                                </ng-container>
+                            </ng-container>
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>
+                    </mat-chip-list>
+                </div>
+            </div>
+
+            <ng-container *ngFor="let product of products | filterCategory:filters.category | filterProduct:filters.search | filterPrice:filters.minPrice:filters.maxPrice | order:filters.order">
+                <h1 class="special-title" *ngIf="!filters.order"><span>{{product.categoryName}}</span></h1>
+                <div class="section row-flex section-products">
+                    <div class="col s6 m4 l3 section-product" *ngFor="let detail of product.products">
+                        <a class="product-container" matRipple [routerLink]="['/product', detail.id]">
+                            <img alt="product" [src]="detail.urlLocation" aria-label="product">
+                        </a>
+                        <a class="product-desc" [routerLink]="['/product', detail.id]">
+                            <span class="p-name">{{detail.name}}</span>
+                            <span class="p-price">{{detail.finalPrice | currency}}</span>
+                            <del *ngIf="detail.price !== detail.finalPrice">{{detail.price | currency}}</del>
+                        </a>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</main>

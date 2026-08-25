@@ -1,0 +1,42 @@
+<div class="widgets-panel">
+
+    <div class="widget-section">
+        <h2 class="widget-title">Ordenar</h2>
+        <button mat-flat-button color="accent" aria-label="Ordenar" [matMenuTriggerFor]="sortMenu">
+            <mat-icon>sort</mat-icon> Elegir el orden
+        </button>
+        <mat-menu #sortMenu="matMenu">
+            <button mat-menu-item (click)="changeOrderList('priceAsc')">Más baratos primero</button>
+            <button mat-menu-item (click)="changeOrderList('priceDes')">Más caros primero</button>
+            <button mat-menu-item (click)="changeOrderList('nameAsc')">Por nombre A-Z</button>
+            <button mat-menu-item (click)="changeOrderList('nameDes')">Por nombre Z-A</button>
+        </mat-menu>
+    </div>
+
+    <div class="widget-section">
+        <h2 class="widget-title">Precio</h2>
+        <mat-form-field>
+            <mat-label>Mínimo</mat-label>
+            <input matInput type="number" [(ngModel)]="filters.minPrice" (ngModelChange)="minPrice$.next($event)">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Máximo</mat-label>
+            <input matInput type="number" [(ngModel)]="filters.maxPrice" (ngModelChange)="maxPrice$.next($event)">
+        </mat-form-field>
+    </div>
+
+    <div class="widget-section">
+        <h2 class="widget-title">Categorías</h2>
+        <ul class="product-categories">
+            <li [ngClass]="{'active-category': !filters.category}">
+                <a aria-label="categoría" (click)="categoryChange(undefined)">Todos</a>
+                <span>{{(totalProducts | async) || 0}}</span>
+            </li>
+            <li *ngFor="let cat of ((listProducts | async) || []) | filterProduct:filters.search" [ngClass]="{'active-category': filters.category === cat.categoryName}">
+                <a aria-label="categoría" (click)="categoryChange(cat.categoryName)">{{cat.categoryName}}</a>
+                <span>{{cat.products?.length || 0}}</span>
+            </li>
+        </ul>
+    </div>
+    
+</div>

@@ -1,0 +1,57 @@
+<footer>
+    <div class="section newsletter">
+        <h2>Suscríbete para recibir nuestras promociones</h2>
+        <form [formGroup]="newsletter" (ngSubmit)="subscribeNewsletter()">
+            <mat-form-field>
+                <mat-label>Correo electrónico</mat-label>
+                <input type="email" matInput formControlName="email">
+                <button mat-icon-button matSuffix type="reset" *ngIf="newsletter.controls.email.value">
+                    <mat-icon>clear</mat-icon>
+                </button>
+                <mat-error *ngIf="newsletter.hasError('required', 'email')">El correo es obligatorio</mat-error>
+            </mat-form-field>
+
+            <button mat-raised-button color="accent" type="submit" [disabled]="newsletter.invalid">Subscribirse</button>
+        </form>
+    </div>
+    <div class="section row-flex">
+        <div class="col s12 m6 l4 footer-col">
+            <h4>Ayuda</h4>
+            <a aria-label="acerca" routerLink="/about" fragment="us">Acerca de nosotros</a>
+            <a aria-label="preguntas" routerLink="/about" fragment="qa">Preguntas frecuentes</a>
+        </div>
+        <div class="col s12 m6 l4 footer-col">
+            <h4>Ponerte en contacto</h4>
+            <a aria-label="comentarios" routerLink="/about" fragment="comments">Envíanos tus dudas o comentarios</a>
+            <a aria-label="teléfono" href="tel:5512345678">Teléfono: 55 1234-5678</a>
+        </div>
+        <div class="col s12 m6 l4 footer-col">
+            <h4>Legales</h4>
+            <a aria-label="términos y condiciones" routerLink="/about" fragment="terms">Términos y condiciones</a>
+            <a aria-label="aviso de privacidad" routerLink="/about" fragment="privacy">Aviso de privacidad</a>
+            <a aria-label="políticas de envío" routerLink="/about">Políticas de envío</a>
+        </div>
+    </div>
+    <div class="space-evenly w-100">
+        <img class="payments" [src]="'payment_methods.png'" alt="Formas de Pago">
+        <div>
+            <button mat-icon-button aria-label="facebook" matTooltip="Facebook" (click)="onFacebookClick()">
+                <fa-icon class="social" [icon]="faFacebookF"></fa-icon>
+            </button>
+            <a target="_blank" href="https://www.instagram.com/quedetallitomx/" mat-icon-button aria-label="instagram" matTooltip="Instagram">
+                <fa-icon class="social" [icon]="faInstagram"></fa-icon>
+            </a>
+            <a target="_blank" mat-icon-button aria-label="Whatsapp" matTooltip="Whatsapp" href="https://wa.me/525527611812">
+                <fa-icon class="social" [icon]="faWhatsapp"></fa-icon>
+            </a>
+            <a target="_blank" href="mailto:contacto@quedetallito.com" mat-icon-button aria-label="email" class="icon-email" matTooltip="Email">
+                <mat-icon>email</mat-icon>
+            </a>
+        </div>
+    </div>
+    <div class="section row-flex bottom">
+        <div class="col s10 pull-s1 push-s1 m6 pull-m3 push-m3 center footer-col">
+            <span>Copyright © 2021 Que Detallito</span>
+        </div>
+    </div>
+</footer>

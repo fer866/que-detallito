@@ -1,0 +1,26 @@
+<h1 mat-dialog-title>Modificar fechas del pedido</h1>
+
+<div mat-dialog-content>
+    <form class="row-flex" #form="ngForm" [formGroup]="deliveryForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" *ngIf="(deliveryDates | async) as date">
+        <!-- Delivery Date -->
+        <mat-form-field appearance="fill" class="col s12">
+            <mat-label>Fecha de Entrega</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="deliveryDate" required [min]="getDateFromString(date.from)" [max]="getDateFromString(date.to)" [matDatepickerFilter]="filterDates">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker [startAt]="getDateFromString(date.from)"></mat-datepicker>
+            <mat-error *ngIf="deliveryForm.hasError('required', 'deliveryDate')">Debes elegir una fecha</mat-error>
+        </mat-form-field>
+
+        <!-- Delivery Times -->
+        <div class="col s12 max-w">
+            <mat-chip-list aria-label="schedule">
+                <mat-chip *ngFor="let time of deliveryTimes | async" class="clicklable" [color]="deliveryForm.controls.idDeliveryTime.value === time.id ? 'primary' : ''" [selected]="deliveryForm.controls.idDeliveryTime.value === time.id" (click)="deliveryForm.patchValue({ idDeliveryTime: time.id })" selectable>{{time.name}}</mat-chip>
+            </mat-chip-list>
+        </div>
+    </form>
+</div>
+
+<div mat-dialog-actions>
+    <button mat-button color="primary" (click)="triggerForm()" [disabled]="deliveryForm.invalid">Guardar</button>
+    <button mat-button [mat-dialog-close] cdkFocusInitial>Cancelar</button>
+</div>

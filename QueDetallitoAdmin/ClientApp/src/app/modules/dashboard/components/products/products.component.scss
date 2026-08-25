@@ -1,0 +1,11 @@
+@import '../../../../../styles/variables';
+
+@media #{$small-and-down} {
+    .mat-header-cell { font-size: 10px; }
+    .mat-cell { font-size: 12px; }
+}
+
+.mat-table {
+    width: 100%;
+    min-width: 730px;
+}

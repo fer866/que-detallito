@@ -1,0 +1,129 @@
+<main>
+    <div class="section">
+        <h2>Órdenes Registradas</h2>
+    </div>
+
+    <div class="section">
+        <form class="search-form" [formGroup]="searchForm" (ngSubmit)="onSearchSubmit()" enctype="multipart/form-data">
+            <!-- Año -->
+            <mat-form-field class="item">
+                <mat-label>Año</mat-label>
+                <mat-select formControlName="year" (selectionChange)="yearChange($event)">
+                    <mat-option *ngFor="let year of listYears | async" [value]="year">{{year}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="searchForm.hasError('required', 'year')">El año es requerido</mat-error>
+            </mat-form-field>
+
+            <!-- Estatus -->
+            <mat-form-field class="item">
+                <mat-label>Estatus</mat-label>
+                <mat-select formControlName="status" (selectionChange)="statusChange($event)">
+                    <mat-option [value]="0">Todos</mat-option>
+                    <mat-option *ngFor="let status of listStatus | async" [value]="status.id">{{status.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="searchForm.hasError('required', 'status')">El estatus es requerido</mat-error>
+            </mat-form-field>
+        </form>
+
+        <div class="space-between">
+            <mat-form-field>
+                <mat-label>Buscar Órdenes</mat-label>
+                <input matInput type="text" (keyup)="applyFilter($event)">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+            <div>
+                <button mat-icon-button (click)="getSales()" [disabled]="searchForm.invalid" matTooltip="Refrescar"><mat-icon>refresh</mat-icon></button>
+                <mat-slide-toggle color="accent" [(ngModel)]="autoRefresh" [disabled]="searchForm.invalid" (change)="onSearchSubmit()">Refescar cada minuto</mat-slide-toggle>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z2">
+                <!-- ID -->
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                    <mat-cell *matCellDef="let s">{{s.id}}</mat-cell>
+                </ng-container>
+
+                <!-- Status -->
+                <ng-container matColumnDef="orderStatus">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Estatus</mat-header-cell>
+                    <mat-cell *matCellDef="let s">{{s.orderStatus}}</mat-cell>
+                </ng-container>
+
+                <!-- # Products -->
+                <ng-container matColumnDef="totalProducts">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header># Productos</mat-header-cell>
+                    <mat-cell *matCellDef="let s">{{s.totalProducts}}</mat-cell>
+                </ng-container>
+
+                <!-- Payment Method -->
+                <ng-container matColumnDef="paymentMethod">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Forma de Pago</mat-header-cell>
+                    <mat-cell *matCellDef="let s">{{s.paymentMethod}}</mat-cell>
+                </ng-container>
+
+                <!-- Total Cost -->
+                <ng-container matColumnDef="totalCost">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Costo</mat-header-cell>
+                    <mat-cell *matCellDef="let s">{{s.totalCost | currency}}</mat-cell>
+                </ng-container>
+
+                <!-- Total Price -->
+                <ng-container matColumnDef="totalPrice">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Precio</mat-header-cell>
+                    <mat-cell *matCellDef="let s">{{s.totalPrice | currency}}</mat-cell>
+                </ng-container>
+
+                <!-- Delivery Date -->
+                <ng-container matColumnDef="deliveryDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Entrega</mat-header-cell>
+                    <mat-cell *matCellDef="let s">{{s.deliveryDate | date:'dd/MM/yyyy'}}</mat-cell>
+                </ng-container>
+
+                <!-- Delivery Time -->
+                <ng-container matColumnDef="deliveryTime">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Hora Entrega</mat-header-cell>
+                    <mat-cell *matCellDef="let s">{{s.deliveryTime}}</mat-cell>
+                </ng-container>
+
+                <!-- Created -->
+                <ng-container matColumnDef="created">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Creado</mat-header-cell>
+                    <mat-cell *matCellDef="let s">{{s.created | date:'dd/MM/yyyy'}}</mat-cell>
+                </ng-container>
+
+                <!-- Modified -->
+                <ng-container matColumnDef="modified">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Modificado</mat-header-cell>
+                    <mat-cell *matCellDef="let s">{{s.modified | date:'dd/MM/yyyy'}}</mat-cell>
+                </ng-container>
+
+                <!-- Edit -->
+                <ng-container matColumnDef="edit">
+                    <mat-header-cell *matHeaderCellDef>Detalles</mat-header-cell>
+                    <mat-cell *matCellDef="let s">
+                        <button mat-icon-button aria-label="opciones" matTooltip="Opciones" [matMenuTriggerFor]="menu">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                            <a mat-menu-item [routerLink]="['/dashboard/sales', s.id, s.orderYear]">
+                                <mat-icon>find_in_page</mat-icon>&nbsp;Ver detalle
+                            </a>
+                            <button mat-menu-item (click)="openChangeStatus(s)" [disabled]="s.idStatus === 2 || s.idStatus === 8">
+                                <mat-icon>tune</mat-icon>&nbsp;Cambiar estatus
+                            </button>
+                        </mat-menu>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayCols"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayCols"></mat-row>
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell">No existe información para mostrar</td>
+                </tr>
+            </mat-table>
+        </div>
+        <mat-paginator [pageSizeOptions]="[20, 30, 50]" showFirstLastButtons></mat-paginator>
+    </div>
+</main>

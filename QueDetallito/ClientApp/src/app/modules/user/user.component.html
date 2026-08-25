@@ -1,0 +1,23 @@
+<header class="header-medium" aria-label="Inicio">
+    <div class="header-section">
+        <div class="header-headline">
+            <h1><mat-icon>account_circle</mat-icon> Mi Cuenta</h1>
+        </div>
+    </div>
+</header>
+
+<main>
+    <mat-toolbar class="mat-elevation-z2">
+        <a routerLink="/user/orders" routerLinkActive="active" mat-button>Pedidos</a>
+        <a routerLink="/user/settings" routerLinkActive="active" mat-button>Mi Cuenta</a>
+        <a routerLink="/user/addresses" routerLinkActive="active" mat-button>Direcciones</a>
+    </mat-toolbar>
+
+    <div class="section n-m" *ngIf="user | async as u">
+        <h1>¡Hola {{u.name}}!</h1>
+    </div>
+
+    <div class="section" [@fade]="getAnimationData(rtOutlet)">
+        <router-outlet #rtOutlet="outlet"></router-outlet>
+    </div>
+</main>

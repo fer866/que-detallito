@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+
+<div mat-dialog-content>
+    <span>{{data.message}}</span>
+    <ng-container *ngIf="data.shortText">
+        <h3>Descripción corta</h3>
+        <p>{{data.shortText}}</p>
+        <h3>Descripción larga</h3>
+        <p class="special-text">{{data.largeText}}</p>
+    </ng-container>
+</div>
+
+<div mat-dialog-actions>
+    <ng-container *ngIf="data.otherAction">
+        <button mat-button color="accent" (click)="onActionClicked(3)">{{data.otherAction}}</button>
+    </ng-container>
+    <ng-container *ngIf="data.okAction">
+        <button mat-button color="primary" (click)="onActionClicked(1)">{{data.okAction}}</button>
+    </ng-container>
+    <button mat-button (click)="onActionClicked(2)" cdkFocusInitial>{{data.cancelAction || 'Cancelar'}}</button>
+</div>

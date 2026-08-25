@@ -1,0 +1,144 @@
+<div id="addressTop">
+    <div class="add" *ngIf="!showForm">
+        <button type="button" mat-raised-button color="accent" (click)="onShowForm()">Agregar dirección de envío</button>
+    </div>
+
+    <ng-container *ngIf="!selectable">
+        <mat-list>
+            <mat-list-item *ngFor="let del of deliveries | async">
+                <h3 matLine>{{del.alias}}</h3>
+                <p matLine>Nombre: {{del.nameDelivery}}</p>
+                <p matLine>{{getAddressName(del)}}</p>
+                <p matLine>Teléfono: {{del.phone}}</p>
+                <div class="edit" matLine>
+                    <button type="button" mat-icon-button (click)="editForm(del)"><mat-icon>create</mat-icon></button>
+                    <button type="button" mat-icon-button color="warn" (click)="deleteDelivery(del)">
+                        <mat-icon>delete_forever</mat-icon>
+                    </button>
+                </div>
+            </mat-list-item>
+            <ng-container *ngIf="!(deliveries | async)?.length">
+                <mat-list-item>
+                    <h3 matLine>No tienes direcciones registradas</h3>
+                </mat-list-item>
+            </ng-container>
+        </mat-list>
+    </ng-container>
+    
+    <ng-container *ngIf="selectable">
+        <mat-selection-list [multiple]="false" #delSelected (selectionChange)="onSelectedValue($event)">
+            <mat-list-option *ngFor="let del of (deliveries | async); index as i" [value]="del.idDelivery" [selected]="i === 0">
+                <mat-icon class="abs" *ngIf="delSelected.selectedOptions.selected[0]?.value === del.idDelivery">check_circle</mat-icon>
+                <h3 matLine>{{del.alias}}</h3>
+                <p matLine>Nombre: {{del.nameDelivery}}</p>
+                <p matLine>{{getAddressName(del)}}</p>
+                <p matLine>Teléfono: {{del.phone}}</p>
+                <div class="edit" matLine>
+                    <button type="button" mat-icon-button (click)="editForm(del)"><mat-icon>create</mat-icon></button>
+                    <button type="button" mat-icon-button color="warn" (click)="deleteDelivery(del)">
+                        <mat-icon>delete_forever</mat-icon>
+                    </button>
+                </div>
+            </mat-list-option>
+        </mat-selection-list>
+    </ng-container>
+</div>
+
+<ng-container *ngIf="showForm">
+    <form class="row-flex" enctype="multipart/form-data" [formGroup]="addressForm" (ngSubmit)="addressSubmit()">
+        <!-- Alias -->
+        <mat-form-field class="col s6 m6">
+            <mat-label>Alias</mat-label>
+            <input type="text" matInput minlength="3" maxlength="20" formControlName="alias" autocomplete="nickname">
+            <mat-icon matPrefix>stars</mat-icon>
+            <mat-hint>Casa, Trabajo, etc.</mat-hint>
+            <mat-error *ngIf="addressForm.hasError('required', 'alias')">El alias es requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Name -->
+        <mat-form-field class="col s6 m6">
+            <mat-label>Nombre y apellido</mat-label>
+            <input type="text" matInput minlength="5" maxlength="30" formControlName="nameDelivery" autocomplete="name">
+            <mat-icon matPrefix>perm_identity</mat-icon>
+            <mat-error *ngIf="addressForm.hasError('required', 'nameDelivery')">El nombre y apellido es requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Phone -->
+        <mat-form-field class="col s6 m6">
+            <mat-label>Teléfono de contacto</mat-label>
+            <input type="tel" matInput minlength="10" maxlength="28" formControlName="phone" placeholder="5512345678" autocomplete="tel-national">
+            <mat-icon matPrefix>phone</mat-icon>
+            <mat-hint>Número celular, de casa u oficina</mat-hint>
+            <mat-error *ngIf="addressForm.hasError('required', 'phone')">El teléfono es requerido</mat-error>
+            <mat-error *ngIf="addressForm.hasError('pattern', 'phone')">Sólo se permiten números</mat-error>
+            <mat-error *ngIf="addressForm.hasError('maxlength', 'phone')">Sólo se permiten hasta 28 caracteres</mat-error>
+            <mat-error *ngIf="addressForm.hasError('minlength', 'phone')">El teléfono debe ser de mínimo 10 dígitos</mat-error>
+        </mat-form-field>
+
+        <!-- ZipCode -->
+        <mat-form-field class="col s6 m6">
+            <mat-label>Código postal</mat-label>
+            <input type="text" matInput minlength="5" maxlength="5" formControlName="zipCode" autocomplete="postal-code">
+            <mat-icon matPrefix>location_on</mat-icon>
+            <mat-error *ngIf="addressForm.hasError('maxlength', 'zipCode')">Verifica el código postal</mat-error>
+            <mat-error *ngIf="addressForm.hasError('pattern', 'zipCode')">Sólo se permiten números</mat-error>
+            <mat-error *ngIf="addressForm.hasError('required', 'zipCode')">El código postal es requerido</mat-error>
+        </mat-form-field>
+
+        <!-- State -->
+        <mat-form-field class="col s6 m6">
+            <mat-label>Estado</mat-label>
+            <input type="text" matInput formControlName="state">
+        </mat-form-field>
+
+        <!-- Town -->
+        <mat-form-field class="col s6 m6">
+            <mat-label>Municipio o Alcaldía</mat-label>
+            <input type="text" matInput formControlName="town">
+        </mat-form-field>
+
+        <!-- Suburb -->
+        <mat-form-field class="col 12 m6">
+            <mat-label>Colonia</mat-label>
+            <mat-select formControlName="suburb">
+                <mat-option *ngFor="let col of suburbList" [value]="col">{{col}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="addressForm.hasError('required', 'suburb')">La colonia es requerida</mat-error>
+        </mat-form-field>
+
+        <!-- Street -->
+        <mat-form-field class="col s7 m8 l7">
+            <mat-label>Calle</mat-label>
+            <input type="text" matInput minlength="5" maxlength="40" formControlName="street" autocomplete="street-address">
+            <mat-icon matPrefix>home</mat-icon>
+            <mat-hint align="end">{{addressForm.controls.street.value?.length || 0}}/40</mat-hint>
+            <mat-error *ngIf="addressForm.hasError('required', 'street')">La calle es requerida</mat-error>
+        </mat-form-field>
+
+        <!-- Number -->
+        <mat-form-field class="col s5 m4 l5">
+            <mat-label>Número exterior</mat-label>
+            <input type="text" matInput minlength="1" maxlength="8" formControlName="number" autocomplete="off">
+            <span matPrefix>#</span>
+            <mat-error *ngIf="addressForm.hasError('required', 'number')">El número exterior es requerido</mat-error>
+        </mat-form-field>
+
+        <!-- Special Address -->
+        <mat-form-field hintLabel="Color de la casa, entre calles, nombre del edificio" class="col s12">
+            <mat-label>Información de envío adicional</mat-label>
+            <input type="text" matInput minlength="5" maxlength="60" formControlName="specialAddress" autocomplete="address-line2">
+            <mat-icon matPrefix>business</mat-icon>
+            <mat-hint align="end">{{addressForm.controls.specialAddress.value?.length || 0 }}/60</mat-hint>
+        </mat-form-field>
+
+        <div class="col s12 m12 l8 push-l2 pull-l2">
+            <p>Arrastra el marcador para seleccionar el punto exacto de la ubicación</p>
+            <div #map [ngClass]="{'no-map': addressForm.invalid, 'map': addressForm.valid}"></div>
+        </div>
+
+        <div class="col s12 center btn-section">
+            <button type="submit" mat-raised-button color="accent" [disabled]="addressForm.invalid">Guardar</button>
+            <button type="button" mat-raised-button (click)="resetForm()">Cancelar</button>
+        </div>        
+    </form>
+</ng-container>

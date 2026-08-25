@@ -1,0 +1,19 @@
+<div class="summary-bottom-section">
+    <div class="product-share">
+        <span class="share-title">Compartir:</span>
+        <div class="social-buttons">
+            <a target="_blank" [href]="sendToFacebook()" mat-icon-button aria-label="facebook" class="icon-facebook" matTooltip="Facebook">
+                <fa-icon [icon]="faFacebookF" [styles]="{'width': '24px', 'height': '24px', 'line-height': '24px'}"></fa-icon>
+            </a>
+            <a target="_blank" [href]="sendToWhatsapp()" mat-icon-button aria-label="Whatsapp" class="icon-whatsapp" matTooltip="Whatsapp">
+                <fa-icon [icon]="faWhatsapp" [styles]="{'width': '24px', 'height': '24px', 'line-height': '24px'}"></fa-icon>
+            </a>
+            <a target="_blank" [href]="sendToTelegram()" mat-icon-button aria-label="Telegram" class="icon-telegram" matTooltip="Telegram">
+                <fa-icon [icon]="faTelegram" [styles]="{'width': '24px', 'height': '24px', 'line-height': '24px'}"></fa-icon>
+            </a>
+            <a target="_blank" [href]="sendToMail()" mat-icon-button aria-label="email" class="icon-email" matTooltip="Email">
+                <mat-icon>email</mat-icon>
+            </a>
+        </div>
+    </div>
+</div>

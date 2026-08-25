@@ -1,0 +1,49 @@
+<ng-container *ngIf="listItems | async as items; else elseBlock">
+    <div *ngIf="items.length > 0; else elseBlock">
+        <mat-nav-list>
+            <h3 matSubheader>Lista de productos en tu carrito</h3>
+            <ng-container *ngFor="let cart of items">
+                <mat-list-item disableRipple>
+                    <img matListAvatar [alt]="cart.name" [src]="cart.urlLocation" [routerLink]="['/product', cart.id]">
+                    <h4 matLine [routerLink]="['/product', cart.id]">{{cart.name}}</h4>
+                    <span matLine>
+                        {{cart.quantity}} X &nbsp;
+                        <span class="price-cart">
+                            {{(cart.finalPrice || 0) * (cart.quantity || 0) | currency}}&nbsp;
+                            <del *ngIf="cart.discount !== 0">{{((cart.price || 0) * (cart.quantity || 0)) | currency}}</del>
+                        </span>
+                    </span>
+        
+                    <button mat-icon-button (click)="removeProductOfCart(cart)" aria-label="quitar producto" matTooltip="Quitar producto del carrito">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </mat-list-item>
+            </ng-container>
+        </mat-nav-list>
+        
+        <mat-divider></mat-divider>
+        
+        <div class="subtotal">
+            <span class="subtotal-text">Subtotal:</span>
+            <span class="subtotal-amount">{{subtotal | async | currency}}</span>
+        </div>
+        
+        <div class="right-section" *ngIf="items.length > 0">
+            <a mat-stroked-button aria-label="ir al carrito" (click)="goToRoute('/cart')">
+                <mat-icon>shopping_basket</mat-icon>&nbsp;Ir al carrito
+            </a>
+            <a mat-flat-button color="primary" aria-label="Proceder al pago" (click)="goToCheckout()">
+                <mat-icon>payment</mat-icon>&nbsp;Proceder al pago
+            </a>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #elseBlock>
+    <div class="no-items">
+        <div>
+            <mat-icon>remove_shopping_cart</mat-icon>
+        </div>
+        <h3>No hay productos en tu carrito</h3>
+    </div>
+</ng-template>

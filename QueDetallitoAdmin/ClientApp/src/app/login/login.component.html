@@ -1,0 +1,59 @@
+<div class="default">
+    <header class="header-medium" aria-label="Inicio">
+        <div class="header-section">
+            <div class="header-headline">
+                <h1><mat-icon>account_circle</mat-icon> Administrar Que Detallito</h1>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="section">
+            <h2 class="login-title">Inicio de sesión con tu cuenta</h2>
+            <form class="row-flex" [formGroup]="loginForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+                <!-- Email -->
+                <mat-form-field appearance="fill" class="col s12 m6 push-m3 pull-m3 no-m">
+                    <mat-label>Usuario</mat-label>
+                    <input type="email" matInput formControlName="email" aria-label="email" required autocomplete="email">
+                    <mat-error *ngIf="loginForm.hasError('required', 'email')">Tu correo es requerido</mat-error>
+                    <mat-error *ngIf="loginForm.hasError('email', 'email')">El correo tiene formato inválido</mat-error>
+                </mat-form-field>
+    
+                <!-- Password -->
+                <mat-form-field appearance="fill" class="col s12 m6 pull-m3 push-m3">
+                    <mat-label>Contraseña</mat-label>
+                    <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" aria-label="password" required autocomplete="current-password">
+                    <button mat-icon-button matSuffix type="button" (click)="showPassword = !showPassword">
+                        <mat-icon>{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                    </button>
+                    <mat-error *ngIf="loginForm.hasError('required', 'password')">La contraseña es requerida</mat-error>
+                    <mat-error *ngIf="loginForm.hasError('minlength', 'password')">Debe tener al menos 8 caracteres</mat-error>
+                    <mat-error *ngIf="loginForm.hasError('pattern', 'password')">Debe tener al menos una mayúscula, una minúscula, un número y un caracter especial @$!%*?&+.-_#</mat-error>
+                </mat-form-field>
+    
+                <!-- Confirm Password -->
+                <ng-container *ngIf="newPassword">
+                    <div class="col s12 m6 push-m3 pull-m3 no-m">
+                        <span>La contraseña debe tener las siguientes condiciones:</span>
+                        <ul>
+                            <li>Al menos una letra minúscula</li>
+                            <li>Al menos una letra mayúscula</li>
+                            <li>Al menos un número</li>
+                            <li>Al menos un caracter especial: @$!%*?&+.-_#</li>
+                        </ul>
+                    </div>
+                    <mat-form-field appearance="fill" class="col s12 m6 push-m3 pull-m3">
+                        <mat-label>Repite la Contraseña</mat-label>
+                        <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="confirmPassword" aria-label="confirm password" required autocomplete="new-password">
+                        <mat-error *ngIf="loginForm.hasError('required', 'confirmPassword')">La confirmación de contraseña es requerida</mat-error>
+                        <mat-error *ngIf="loginForm.hasError('notSame')">La contraseña no coincide con la anterior</mat-error>
+                    </mat-form-field>
+                </ng-container>
+    
+                <div class="col s12 center">
+                    <button type="submit" mat-raised-button color="accent">Iniciar sesión</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>

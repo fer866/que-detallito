@@ -1,0 +1,70 @@
+.gallery {
+    position: relative;
+    width: 100%;
+
+    .btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 2px;
+        padding: 5px 5px 0;
+        background-color: var(--background);
+        opacity: 0.6;
+        z-index: 1;
+        cursor: pointer;
+        &.prev {
+            left: 20px;
+        }
+        &.next {
+            right: 20px;
+        }
+        mat-icon {
+            font-size: 34px;
+            width: 34px;
+            height: 34px;
+        }
+    }
+
+    .btn-dots {
+        position: absolute;
+        left: 50%;
+        text-align: center;
+        transform: translateX(-50%);
+        z-index: 1;
+        .dot {
+            display: inline-block;
+            width: 0.85em;
+            height: 0.85em;
+            border-radius: 50%;
+            outline: none;
+            background-color: var(--foreground);
+            opacity: 0.25;
+            cursor: pointer;
+            transition: opacity ease-in-out 0.2s;
+            &:not(:first-child) {
+                margin-left: 0.6em;
+            }
+            &:hover, &:focus {
+                opacity: 1;
+            }
+            &.active-dot {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.gallery-scroller {
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: flex;
+    align-items: center;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    transition: height 0.5s ease-in-out;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}

@@ -1,0 +1,87 @@
+<div id="paymentTop" class="payment-top">
+    <mat-tab-group dynamicHeight [selectedIndex]="tabIndex" (selectedIndexChange)="onTabChange($event)">
+        <!-- Cards -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">credit_card</mat-icon>&nbsp;Pago con Tarjeta
+            </ng-template>
+            <div class="tab-content">
+                <h3>Pago con tarjeta</h3>
+                <div class="card-container">
+                    <div class="card-content">
+                        <div class="card-element" #cardInfo></div>
+                    </div>
+                </div>
+                <div class="btn-pay">
+                    <button type="button" mat-flat-button color="primary" (click)="onCardClick()" [disabled]="cardInProcess">Pagar</button>
+                </div>
+                <div class="card-error" *ngIf="cardError">
+                    <span>{{cardError}}</span>
+                </div>
+            </div>
+        </mat-tab>
+
+        <!-- Paypal -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <fa-icon [icon]="faPaypal" [styles]="{width: '24px',height: '24px','line-height': '24px','margin-right': '8px'}"></fa-icon> PayPal
+            </ng-template>
+            <div class="tab-content">
+                <h3>Pago mediante PayPal</h3>
+                <p>Serás direccionado a tu cuenta de PayPal para realizar el pago</p>
+                <div #paypal></div>
+                <div class="card-error" *ngIf="paypalError">
+                    <span>{{paypalError}}</span>
+                </div>
+            </div>
+        </mat-tab>
+
+        <!-- Cash OXXO -->
+        <!-- <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">paid</mat-icon> En Efectivo por OXXO
+            </ng-template>
+            <div class="tab-content">
+                <h2>Pago en Efectivo por OXXO</h2>
+                <p>Por este medio podrás realizar el pago de tu pedido en la sucursal OXXO de tu preferencia, se generará una orden de pago y tendrás como <strong>máximo 1 día para realizar el pago,</strong> de lo contrario el pedido quedará cancelado</p>
+                <div class="row-flex no-m">
+                    <div class="col s12 m8 push-m2 pull-m2 l6 push-l3 pull-l3 no-m">
+                        <mat-card>
+                            <mat-card-header>
+                                <mat-card-title>Datos del pago</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <form class="row-flex" [formGroup]="oxxoForm" (ngSubmit)="onOxxoSubmit()" enctype="multipart/form-data"> -->
+                                    <!-- Name -->
+                                    <!-- <mat-form-field appearance="outline" class="col s12 m12 l6">
+                                        <mat-label>Nombre y apellido</mat-label>
+                                        <input matInput type="text" required minlength="2" maxlength="60" formControlName="name">
+                                        <mat-error *ngIf="oxxoForm.hasError('required', 'name')">Es necesario que indiques el nombre</mat-error>
+                                        <mat-error *ngIf="oxxoForm.hasError('pattern', 'name')">El nombre no es válido</mat-error>
+                                    </mat-form-field> -->
+            
+                                    <!-- Email -->
+                                    <!-- <mat-form-field appearance="outline" class="col s12 m12 l6">
+                                        <mat-label>Correo electrónico</mat-label>
+                                        <input matInput type="email" required formControlName="email">
+                                        <mat-error *ngIf="oxxoForm.hasError('required', 'email')">Es necesario que indiques el correo</mat-error>
+                                        <mat-error *ngIf="oxxoForm.hasError('email', 'email')">El correo electrónico no es válido</mat-error>
+                                    </mat-form-field> -->
+            
+                                    <!-- <button type="submit" mat-flat-button color="primary" [disabled]="oxxoForm.invalid || oxxoForm.disabled">Generar Pago por OXXO</button>
+                                </form>
+                                <div class="card-error" *ngIf="oxxoError">
+                                    <span>{{oxxoError}}</span>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+        </mat-tab> -->
+    </mat-tab-group>
+
+    <div class="center">
+        <img class="payments" alt="Formas de Pago" src="assets/payment_methods.png">
+    </div>
+</div>

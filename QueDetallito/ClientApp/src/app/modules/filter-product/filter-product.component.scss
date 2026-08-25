@@ -1,0 +1,47 @@
+.widgets-panel {
+    padding: 0 18px;
+    .widget-section {
+        margin-bottom: 30px;
+        .widget-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+    }
+}
+.product-categories {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-top: -15px;
+    li {
+        position: relative;
+        font-size: 1em;
+        font-weight: 400;
+        line-height: 2.14;
+        transition: all 0.25s ease-in-out 0s;
+        color: #999;
+        &:hover {
+            color: inherit;
+            font-weight: 600;
+        }
+        a {
+            position: relative;
+            text-decoration: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            flex-direction: row;
+        }
+        span {
+            position: relative;
+            display: inline-block;
+        }
+    }
+    li.active-category {
+        color: inherit;
+        font-weight: 600;
+    }
+}

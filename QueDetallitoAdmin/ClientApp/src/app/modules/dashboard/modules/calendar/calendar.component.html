@@ -1,0 +1,35 @@
+<main>
+    <div class="section">
+        <h2>Registro de días Inhábiles</h2>
+        <div class="space-between">
+            <mat-form-field>
+                <mat-label>Año a visualizar</mat-label>
+                <mat-select [(value)]="yearSelected" (selectionChange)="onYearChange($event)">
+                    <mat-option *ngFor="let year of listCalendarYears" [value]="year">{{year}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div>
+                <button mat-stroked-button color="primary" (click)="editCalendar()">
+                    <ng-container *ngIf="edit">Terminar edición</ng-container>
+                    <ng-container *ngIf="!edit">Agregar días inhábiles</ng-container>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="row-flex">
+            <div class="col s12 m10 push-m1 pull-m1 l8 push-l2 pull-l2">
+                <div *ngIf="!edit">
+                    <button mat-flat-button color="primary" [disabled]="currentIndex === 0" (click)="changeMonth(false)">
+                        <mat-icon>navigate_before</mat-icon>
+                    </button>
+                    <button mat-flat-button color="primary" [disabled]="(currentIndex + 1) === listCalendar.length" (click)="changeMonth(true)">
+                        <mat-icon>navigate_next</mat-icon>
+                    </button>
+                </div>
+                <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+            </div>
+        </div>
+    </div>
+</main>

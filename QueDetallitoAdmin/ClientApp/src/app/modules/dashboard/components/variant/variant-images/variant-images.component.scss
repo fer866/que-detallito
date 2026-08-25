@@ -1,0 +1,35 @@
+@import '../../../../../../styles/variables';
+
+.justify-space {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.images-section {
+    width: 100%;
+    min-width: 50vw;
+}
+.img-container {
+    position: relative;
+    width: 125px;
+    height: 125px;
+    margin: 0 0 1.16em;
+    padding: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    @media #{medium-and-up} {
+        width: 140px;
+        height: 140px;
+    }
+    button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+    img {
+        width: 100%;
+        height: auto;
+        margin-top: -25%;
+    }
+}

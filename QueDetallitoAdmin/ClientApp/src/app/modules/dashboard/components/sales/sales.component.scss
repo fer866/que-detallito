@@ -1,0 +1,30 @@
+.search-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    @media only screen and (max-width: 600px) {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    .item {
+        &:not(:last-child) {
+            margin-right: 16px;
+        }
+    }
+}
+.mat-table {
+    width: 100%;
+    min-width: 800px;
+}
+.mat-column-id,
+.mat-column-edit {
+    max-width: 40px;
+}
+.mat-column-totalProducts {
+    max-width: 58px;
+}
+.mat-column-orderStatus {
+    max-width: 75px;
+}

@@ -1,0 +1,8 @@
+<app-toolbar></app-toolbar>
+<app-sidenav>
+  <app-loader></app-loader>
+  <div [@fade]="getAnimationData(routerOutlet)">
+    <router-outlet #routerOutlet="outlet"></router-outlet>
+  </div>
+  <app-footer></app-footer>
+</app-sidenav>

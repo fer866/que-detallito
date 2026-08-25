@@ -1,0 +1,54 @@
+.bold {
+    font-weight: bold;
+}
+.border-top {
+    border-top: 1px solid rgba(var(--foreground-rgb), 0.3);
+    padding-top: 12px;
+}
+.mat-table {
+    width: 100%;
+    min-width: 520px;
+}
+.mat-column-idProduct,
+.mat-column-quantity,
+.mat-column-discount {
+    max-width: 45px;
+}
+.mat-column-cost,
+.mat-column-price {
+    max-width: 80px;
+}
+.list-detail {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    &:not(:last-child) {
+        margin-bottom: 12px;
+    }
+    mat-icon {
+        margin-right: 10px;
+    }
+}
+.payment-line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    span {
+        font-size: 14px;
+    }
+}
+.note-line {
+    display: flex;
+    flex-direction: column;
+    margin-top: 22px;
+    font-size: 14px;
+    text-align: justify;
+}
+.mat-line {
+    white-space: normal !important;
+}

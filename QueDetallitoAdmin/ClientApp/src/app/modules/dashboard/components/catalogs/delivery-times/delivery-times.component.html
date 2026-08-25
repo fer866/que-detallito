@@ -1,0 +1,129 @@
+<ng-container *ngIf="!edit">
+    <div class="space-between">
+        <mat-form-field>
+            <mat-label>Buscar Catálogos</mat-label>
+            <input matInput type="text" (keyup)="applyFilter($event)">
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        <button mat-icon-button (click)="getDeliveryTimes()" matTooltip="Refrescar"><mat-icon>refresh</mat-icon></button>
+    </div>
+    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z3">
+        <!-- ID -->
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+            <mat-cell *matCellDef="let cat">{{cat.id}}</mat-cell>
+        </ng-container>
+
+        <!-- Name -->
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Horario</mat-header-cell>
+            <mat-cell *matCellDef="let cat">{{cat.name}}</mat-cell>
+        </ng-container>
+
+        <!-- Weekday -->
+        <ng-container matColumnDef="weekday">
+            <mat-header-cell *matHeaderCellDef>Día(s) de la semana</mat-header-cell>
+            <mat-cell *matCellDef="let cat">
+                <ng-container [ngSwitch]="true">
+                    <span *ngSwitchCase="cat.saturday">Sábado</span>
+                    <span *ngSwitchCase="cat.sunday">Domingo</span>
+                    <span *ngSwitchDefault>Lunes a Viernes</span>
+                </ng-container>
+            </mat-cell>
+        </ng-container>
+
+        <!-- Max Time -->
+        <ng-container matColumnDef="maxTimeStr">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Hora Máxima</mat-header-cell>
+            <mat-cell *matCellDef="let cat">{{cat.maxTimeStr}}</mat-cell>
+        </ng-container>
+
+        <!-- Active -->
+        <ng-container matColumnDef="active">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Activo</mat-header-cell>
+            <mat-cell *matCellDef="let cat">
+                <mat-icon>{{cat.active ? 'done' : 'clear'}}</mat-icon>
+            </mat-cell>
+        </ng-container>
+
+        <!-- Creation Date -->
+        <ng-container matColumnDef="created">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de creación</mat-header-cell>
+            <mat-cell *matCellDef="let cat">{{cat.created | date: 'dd/MM/yyyy'}}</mat-cell>
+        </ng-container>
+
+        <!-- Edit -->
+        <ng-container matColumnDef="edit">
+            <mat-header-cell *matHeaderCellDef>Editar</mat-header-cell>
+            <mat-cell *matCellDef="let cat">
+                <button mat-icon-button aria-label="opciones" matTooltip="Opciones" [matMenuTriggerFor]="menu">
+                    <mat-icon>more_horiz</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="editTime(cat)">Editar</button>
+                    <button mat-menu-item (click)="deleteTime(cat)">Eliminar</button>
+                </mat-menu>
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayCols"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayCols;"></mat-row>
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell">No existe información para mostrar</td>
+        </tr>
+    </mat-table>
+
+    <mat-paginator [pageSizeOptions]="[15, 30, 50]" showFirstLastbuttons></mat-paginator>
+</ng-container>
+
+<ng-container *ngIf="edit">
+    <h2>Agregar Horario de Entrega</h2>
+    <form [formGroup]="timeForm" (ngSubmit)="onSubmitTime()" enctype="multipart/form-data" class="row-flex">
+        
+        <!-- Start & End Time -->
+        <div class="col s12 m8">
+            <mat-form-field>
+                <mat-label>Desde</mat-label>
+                <input matInput type="time" required formControlName="startTimeStr">
+                <mat-error *ngIf="timeForm.hasError('required', 'startTimeStr')">Es requerido el horario inicial</mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Hasta</mat-label>
+                <input matInput type="time" required formControlName="endTimeStr">
+                <mat-error *ngIf="timeForm.hasError('required', 'endTimeStr')">Es requerido el horario final</mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Max Time -->
+        <mat-form-field class="col s12 m4">
+            <mat-label>Hora máxima para seleccionarlo</mat-label>
+            <input matInput type="time" required formControlName="maxTimeStr">
+            <mat-hint>Esta hora sólo aplica para pedidos del día siguiente</mat-hint>
+            <mat-error *ngIf="timeForm.hasError('required', 'maxTimeStr')">Es requerido el horario máximo</mat-error>
+        </mat-form-field>
+
+        <!-- Name -->
+        <mat-form-field class="col s12 m5">
+            <mat-label>Descripción del Horario</mat-label>
+            <input type="text" minlength="3" maxlength="30" matInput formControlName="name" required>
+            <mat-error *ngIf="timeForm.hasError('required', 'name')">Este campo es requerido</mat-error>
+            <mat-hint align="end">{{timeForm.controls.name.value?.length || 0}} / 30</mat-hint>
+        </mat-form-field>
+
+        <!-- Weekday -->
+        <div class="col s12 m7">
+            <mat-slide-toggle formControlName="saturday" (change)="onWeekdayChange($event, false)">Sábado</mat-slide-toggle>
+            <mat-slide-toggle formControlName="sunday" (change)="onWeekdayChange($event, true)">Domingo</mat-slide-toggle>
+        </div>
+
+        <!-- Active -->
+        <div class="col s12">
+            <mat-slide-toggle formControlName="active">¿Está activo?</mat-slide-toggle>
+        </div>
+
+        <div class="col s12 btn-section">
+            <button mat-raised-button color="primary" type="submit">Guardar</button>
+            <button mat-raised-button type="button" (click)="onResetForm()">Cancelar</button>
+        </div>
+    </form>
+</ng-container>

@@ -1,0 +1,42 @@
+.summary-bottom-section {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    .product-share {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-right: 20px;
+        .share-title {
+            font-weight: 600;
+            margin-right: 15px;
+        }
+        .social-buttons {
+            vertical-align: middle;
+            a {
+                display: inline-block;
+                margin: 4px;
+                color: rgb(255, 255, 255);
+                fa-icon {
+                    display: inline-block;
+                    width: 24px;
+                    height: 24px;
+                    line-height: 24px;
+                }
+            }
+            .icon-facebook {
+                background-color: rgb(54, 84, 147);
+            }
+            .icon-telegram {
+                background-color: #0088cc;
+            }
+            .icon-whatsapp {
+                background-color: #25D366;
+            }
+            .icon-email {
+                background-color: rgb(248, 154, 30);
+            }
+        }
+    }
+}

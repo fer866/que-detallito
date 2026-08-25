@@ -1,0 +1,47 @@
+.tab-content {
+    margin: 16px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    position: relative;
+}
+.tab-icon {
+    margin-right: 8px;
+}
+.card-container {
+    overflow-x: auto;
+    width: 100%;
+    .card-content {
+        padding: 10px 2px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        min-width: 284px;
+        max-width: 520px;
+        margin: auto;
+        .card-element {
+            border-radius: 4px 4px 0 0 ;
+            width: 100%;
+            background: var(--background);
+        }
+    }
+}
+.btn-pay {
+    width: 100%;
+    max-width: 520px;
+    button {
+        width: 100%;
+    }
+}
+.card-error {
+    margin-top: 12px;
+    padding: 18px;
+    background-color: var(--footer);
+    color: var(--warn);
+    border-radius: 7px;
+    font-weight: 500;
+}
+.payment-top {
+    margin: 0 -24px 0;
+}

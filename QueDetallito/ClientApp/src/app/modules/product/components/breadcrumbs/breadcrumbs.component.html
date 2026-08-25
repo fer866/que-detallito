@@ -1,0 +1,9 @@
+<div class="breadcrumbs-section">
+    <div class="breadcrumbs-wrap">
+        <nav class="breadcrumbs-nav">
+            <a routerLink="/home" aria-label="inicio">Inicio</a>
+            <a routerLink="/gifts" [queryParams]="{category: product?.categoryName}" [attr.aria-label]="product?.categoryName">{{product?.categoryName}}</a>
+            <span class="breadcrumb-last">{{product?.name}}</span>
+        </nav>
+    </div>
+</div>

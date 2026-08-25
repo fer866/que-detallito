@@ -1,0 +1,13 @@
+<ng-container *ngIf="data?.title">
+    <h1 mat-dialog-title>{{data.title}}</h1>
+</ng-container>
+<div mat-dialog-content>
+    <p>{{data?.message}}</p>
+</div>
+<div mat-dialog-actions>
+    <ng-container *ngIf="data?.otherText">
+        <button mat-button color="accent" (click)="onActionClick('other')">{{data.otherText}}</button>
+    </ng-container>
+    <button mat-button color="primary" (click)="onActionClick('confirm')">{{data.confirmText}}</button>
+    <button mat-button cdkFocusInitial (click)="onActionClick('cancel')">{{data.cancelText}}</button>
+</div>

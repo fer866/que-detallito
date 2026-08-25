@@ -1,0 +1,119 @@
+<mat-toolbar color="primary" class="mat-elevation-z6">    
+    <mat-toolbar-row>
+        <button mat-icon-button aria-label="Menú principal" (click)="toggleSidenav()" [style.marginLeft.px]="(mobile | async) ? 0 : -64">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <a mat-button aria-label="Que Detallito" routerLink="/" title="Que Detallito">
+            <ng-container *ngIf="!(mobile | async) && !(isDark | async)">
+                <img class="logo-img" alt="Que Detallito" src="assets/logo_qd.webp" />
+            </ng-container>
+            <ng-container *ngIf="!(mobile | async) && (isDark | async)">
+                <img class="logo-img" alt="Que Detallito" src="assets/logo_qd_dark.webp" />
+            </ng-container>
+            <ng-container *ngIf="(mobile | async) && !(isDark | async)">
+                <img class="logo-img-sm" alt="Que Detallito" src="assets/logo_qd_sm.webp" />
+            </ng-container>
+            <ng-container *ngIf="(mobile | async) && (isDark | async)">
+                <img class="logo-img-sm" alt="Que Detallito" src="assets/logo_qd_sm_dark.webp" />
+            </ng-container>
+        </a>
+        <ng-container *ngIf="!(mobile | async)">
+            <a mat-button *ngFor="let option of menuOptions" [attr.aria-label]="option.name" [routerLink]="option.url" routerLinkActive="active">{{option.name}}</a>
+        </ng-container>
+    
+        <span class="spacer"></span>
+    
+        <!-- Search -->
+        <button mat-icon-button aria-label="buscar" matTooltip="Buscar" (click)="toggleSearchForm(true)">
+            <mat-icon>search</mat-icon>
+        </button>
+    
+        <!-- Favoritos -->
+        <button mat-icon-button aria-label="favoritos" matTooltip="Favoritos" [matMenuTriggerFor]="favMenu">
+            <mat-icon [matBadge]="(wishlistCount | async) || 0" matBadgeOverlap="false" matBadgeColor="accent">favorite_border</mat-icon>
+        </button>
+        <mat-menu #favMenu="matMenu">
+            <button mat-menu-item *ngIf="!(listFavorites | async)?.length" disabled>Aún no tienes favoritos</button>
+            <ng-container *ngFor="let fav of listFavorites | async">
+                <button mat-menu-item [routerLink]="['/product', fav.id]">
+                    <mat-icon>card_giftcard</mat-icon>
+                    <span>{{fav.name}} {{fav.finalPrice | currency}}</span>
+                </button>
+            </ng-container>
+            <button mat-menu-item routerLink="/wishlist">
+                <mat-icon>view_list</mat-icon>
+                <span>Ver lista de favoritos</span>
+            </button>
+        </mat-menu>
+    
+        <!-- Shopping Basket -->
+        <button mat-icon-button aria-label="carrito" matTooltip="Carrito de compras" (click)="openCartItems()">
+            <mat-icon [matBadge]="(cartCount | async) || 0" matBadgeOverlap="false" matBadgeColor="accent">shopping_basket</mat-icon>
+        </button>
+
+        <!-- Account -->
+        <button mat-icon-button aria-label="cuenta" matTooltip="Cuenta" [matMenuTriggerFor]="userMenu">
+            <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+            <!-- No Authenticated -->
+            <ng-container *ngIf="!(isLogged | async)">
+                <a mat-menu-item routerLink="/login">
+                    <mat-icon>login</mat-icon>
+                    <span>Iniciar sesión</span>
+                </a>
+                <a mat-menu-item routerLink="/login" [queryParams]="{signIn: true}">
+                    <mat-icon>person_add</mat-icon>
+                    <span>Crear cuenta</span>
+                </a>
+            </ng-container>
+
+            <!-- Authenticated -->
+            <ng-container *ngIf="(isLogged | async)">
+                <button type="button" mat-menu-item aria-label="name">¡Hola {{(user | async)?.name}}!</button>
+                <a mat-menu-item routerLink="/user/settings">
+                    <mat-icon>admin_panel_settings</mat-icon>
+                    <span>Mi cuenta</span>
+                </a>
+            </ng-container>
+            <button mat-menu-item aria-label="Tema" [matMenuTriggerFor]="themeMenu">
+                <mat-icon>invert_colors</mat-icon>
+                <span>Cambiar tema</span>
+            </button>
+            <ng-container *ngIf="(isLogged | async)">
+                <button type="button" mat-menu-item (click)="signOffUser()">
+                    <mat-icon>logout</mat-icon>
+                    <span>Cerrar sesión</span>
+                </button>
+            </ng-container>
+        </mat-menu>
+        <mat-menu #themeMenu="matMenu">
+            <mat-radio-group class="radio-btn" (change)="themeChange($event)">
+                <mat-radio-button *ngFor="let opt of themeOptions" [value]="opt.option" [checked]="(themeOption | async) === opt.option">{{opt.name}}</mat-radio-button>
+            </mat-radio-group>
+        </mat-menu>
+    </mat-toolbar-row>
+
+    <!-- Search Row -->
+    <mat-toolbar-row *ngIf="showSearch">
+        <div class="space-between w-100 no-wrap">
+            <form [formGroup]="searchForm" enctype="multipart/form-data" class="f-search">
+                <mat-form-field appearance="standard" class="w-100">
+                    <mat-label>Buscar</mat-label>
+                    <input #inputSearch="matInput" matInput type="search" formControlName="search" aria-label="search" [matAutocomplete]="auto">
+                    <mat-icon matSuffix>search</mat-icon>
+                    <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption (optionSelected)="searchOptionSelected($event)" [displayWith]="displayFn">
+                        <mat-option *ngFor="let p of listSearch | async" [value]="p">
+                            <img class="search-img" aria-hidden [src]="p.urlLocation">
+                            <span>{{p.name}} {{p.finalPrice | currency}} <del *ngIf="p.discount">{{p.price | currency}}</del></span>
+                        </mat-option>
+                        <mat-option id="optall" [value]="setLastOptionValue(searchForm.controls.search.value)" *ngIf="searchForm.controls.search.valid">Ver todos los resultados con "{{searchForm.controls.search.value}}"</mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </form>
+            <button mat-icon-button type="button" (click)="toggleSearchForm(false)" matTooltip="Cerrar">
+                <mat-icon>clear</mat-icon>
+            </button>
+        </div>
+    </mat-toolbar-row>
+</mat-toolbar>

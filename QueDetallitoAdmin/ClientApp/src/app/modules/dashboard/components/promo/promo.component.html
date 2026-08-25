@@ -1,0 +1,197 @@
+<main>
+    <div class="section" *ngIf="!edit">
+        <h2>Promociones Vigentes</h2>
+        <div>
+            <button mat-stroked-button color="primary" (click)="edit = true">Agregar Nueva Promoción</button>
+        </div>
+    </div>
+
+    <div class="section" *ngIf="!edit">
+        <div class="space-between">
+            <mat-form-field>
+                <mat-label>Buscar promociones</mat-label>
+                <input type="text" matInput (keyup)="applyFilter($event)">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+            <button mat-icon-button (click)="getPromos()" matTooltip="Refrescar"><mat-icon>refresh</mat-icon></button>
+        </div>
+        <div class="table-container">
+            <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z2">
+                <!-- Image -->
+                <ng-container matColumnDef="image">
+                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                    <mat-cell *matCellDef="let p">
+                        <a (click)="onImageClick()" class="product-thumbnail">
+                            <img [alt]="p.name" [src]="p.urlLocationSm">
+                        </a>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- ID -->
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                    <mat-cell *matCellDef="let p">{{p.id}}</mat-cell>
+                </ng-container>
+
+                <!-- Name -->
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+                    <mat-cell *matCellDef="let p">{{p.name}}</mat-cell>
+                </ng-container>
+
+                <!-- PromoBegin -->
+                <ng-container matColumnDef="promoBegin">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Inicio</mat-header-cell>
+                    <mat-cell *matCellDef="let p">{{p.promoBegin | date: 'dd/MM/yyyy'}}</mat-cell>
+                </ng-container>
+
+                <!-- PromoExpires -->
+                <ng-container matColumnDef="promoExpires">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Fin</mat-header-cell>
+                    <mat-cell *matCellDef="let p">{{p.promoExpires | date: 'dd/MM/yyyy'}}</mat-cell>
+                </ng-container>
+
+                <!-- RouterName -->
+                <ng-container matColumnDef="routerName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Ruta</mat-header-cell>
+                    <mat-cell *matCellDef="let p">{{p.routerName}}</mat-cell>
+                </ng-container>
+
+                <!-- Param -->
+                <ng-container matColumnDef="param">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Opción Ruta</mat-header-cell>
+                    <mat-cell *matCellDef="let p">
+                        <ng-container *ngIf="p.routerParam">producto: {{p.routerParam}}</ng-container>
+                        <ng-container *ngIf="p.queryParam">{{p.queryParam}}</ng-container>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Option -->
+                <ng-container matColumnDef="option">
+                    <mat-header-cell *matHeaderCellDef>Tipo de Promoción</mat-header-cell>
+                    <mat-cell *matCellDef="let p">
+                        <ng-container [ngSwitch]="true">
+                            <span *ngSwitchCase="p.isCategory">Categoría</span>
+                            <span *ngSwitchCase="p.isTemporal">Temporada</span>
+                            <span *ngSwitchCase="p.isCarousel">Carusel</span>
+                        </ng-container>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- EditOptions -->
+                <ng-container matColumnDef="edit">
+                    <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+                    <mat-cell *matCellDef="let p">
+                        <button mat-icon-button aria-label="opciones" matTooltip="Opciones" [matMenuTriggerFor]="menu">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item (click)="editPromo(p)">
+                                <mat-icon>edit</mat-icon>&nbsp;Editar
+                            </button>
+                            <button mat-menu-item (click)="deletePromo(p)">
+                                <mat-icon>delete_forever</mat-icon>&nbsp;Eliminar
+                            </button>
+                        </mat-menu>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayColumns"></mat-row>
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell">No existe información para mostrar</td>
+                </tr>
+            </mat-table>
+        </div>
+        <mat-paginator [pageSizeOptions]="[15, 30, 50]" showFirstLastButtons></mat-paginator>
+    </div>
+
+    <div class="section" *ngIf="edit">
+        <div>
+            <h2 *ngIf="!idPromo">Registrar nueva promoción</h2>
+            <h2 *ngIf="idPromo">Actualizar promoción</h2>
+        </div>
+
+        <form class="row-flex" [formGroup]="promoForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+            <!-- Name -->
+            <mat-form-field class="col s12 m6 pull-m6">
+                <mat-label>Nombre de la promoción</mat-label>
+                <input matInput type="text" maxlength="100" formControlName="name" autocomplete="off" required>
+                <mat-hint align="end">{{promoForm.controls.name.value?.length || 0}} / 100</mat-hint>
+                <mat-error *ngIf="promoForm.hasError('required', 'name')">Es requerido</mat-error>
+                <mat-error *ngIf="promoForm.hasError('maxlength', 'name')">Solo se permiten hasta 100 caracteres</mat-error>
+            </mat-form-field>
+
+            <!-- Promo Dates -->
+            <mat-form-field class="col s12 m4">
+                <mat-label>Inicio y Fin de la Promoción</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate formControlName="promoBegin" required>
+                    <input matEndDate formControlName="promoExpires" required>
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+                <mat-error *ngIf="promoForm.hasError('required', 'promoBegin')">Es requerida la fecha inicial</mat-error>
+                <mat-error *ngIf="promoForm.hasError('required', 'promoExpires')">Es requerida la fecha de fin</mat-error>
+            </mat-form-field>
+
+            <!-- RouterName -->
+            <mat-form-field class="col s12 m4">
+                <mat-label>Ruta</mat-label>
+                <mat-select formControlName="routerName">
+                    <mat-option></mat-option>
+                    <mat-option *ngFor="let r of routesList" [value]="r.route">{{r.name}}</mat-option>
+                </mat-select>
+                <mat-hint>Selecciona la ruta de la promoción al dar clic</mat-hint>
+            </mat-form-field>
+
+            <!-- RouterParam -->
+            <mat-form-field class="col s12 m4">
+                <mat-label>Producto</mat-label>
+                <mat-select formControlName="routerParam">
+                    <mat-option>Ninguno</mat-option>
+                    <mat-option *ngFor="let prod of products | async" [value]="prod.id">
+                        {{prod.name}}
+                        <ng-container *ngIf="!prod.active">&nbsp;|&nbsp;Inactivo</ng-container>
+                    </mat-option>
+                </mat-select>
+                <mat-hint>Seleccionar si la promoción enviará al cliente directamente al producto</mat-hint>
+            </mat-form-field>
+
+            <!-- QueryParam -->
+            <mat-form-field class="col s12 m4">
+                <mat-label>Categoría</mat-label>
+                <mat-select formControlName="queryParam">
+                    <mat-option>Ninguno</mat-option>
+                    <mat-option *ngFor="let cat of categories | async" [value]="cat.name">{{cat.name}}</mat-option>
+                </mat-select>
+                <mat-hint>Seleccionar si la promoción enviará al cliente a la categoría seleccionada</mat-hint>
+            </mat-form-field>
+
+            <!-- Options -->
+            <div class="col s12 m8">
+                <mat-slide-toggle formControlName="isCategory" color="accent" (change)="optionChange($event, 1)">Es categoría de producto</mat-slide-toggle>
+                <mat-slide-toggle formControlName="isTemporal" color="accent" (change)="optionChange($event, 2)">Es de temporada (san valentín, navidad, etc.)</mat-slide-toggle>
+                <mat-slide-toggle formControlName="isCarousel" color="accent" (change)="optionChange($event, 3)">Es para el carusel de inicio</mat-slide-toggle>
+                <span class="error-form" *ngIf="promoForm.hasError('atLeastOne')">Debes seleccionar por lo menos una opción</span>
+            </div>
+
+            <!-- Big Image -->
+            <div class="col s12 m5 pull-m7">
+                <label>Imagen Grande</label>
+                <input type="file" formControlName="file" accept=".webp" (change)="onFileChange($event, false)">
+            </div>
+
+            <!-- Small Image -->
+            <div class="col s12 m5 pull-m7">
+                <label>Imagen Pequeña</label>
+                <input type="file" formControlName="fileSm" accept=".webp" (change)="onFileChange($event, true)">
+            </div>
+
+            <div class="col s12 btn-section">
+                <button type="submit" mat-raised-button color="primary" [disabled]="promoForm.invalid">Guardar</button>
+                <button type="button" mat-raised-button (click)="resetForm()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</main>

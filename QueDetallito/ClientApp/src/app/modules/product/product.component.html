@@ -1,0 +1,192 @@
+<main *ngIf="product; else elseProduct">
+    <div class="w-95">
+        <app-breadcrumbs [product]="product"></app-breadcrumbs>
+    </div>
+
+    <div class="n-section">
+        <div class="row-flex product-summary">
+            <!-- Product Images -->
+            <div class="col s12 l7 no-m">
+                <app-imageholder [product]="product" [variant]="variant"></app-imageholder>
+            </div>
+            <!-- Product Summary Inner -->
+            <div class="col s12 l5">
+                <div class="product-summary-inner">
+                    <h1 class="product-title">{{product?.name}}</h1>
+                    <p class="price">
+                        <ins>{{variant?.finalPrice | currency}}</ins>
+                        <del *ngIf="variant?.discount !== 0">{{variant?.price | currency}}</del>
+                    </p>
+
+                    <!-- Rating -->
+                    <div class="product-rating">
+                        <div class="star-rating">
+                            <span class="rating-bg">
+                                <mat-icon>star_rate</mat-icon>
+                                <mat-icon>star_rate</mat-icon>
+                                <mat-icon>star_rate</mat-icon>
+                                <mat-icon>star_rate</mat-icon>
+                                <mat-icon>star_rate</mat-icon>
+                            </span>
+                            <span class="rating-fg" [style]="{width: ((product?.reviewStars || 0) * 100 / 5) + '%' }">
+                                <mat-icon>star_rate</mat-icon>
+                                <mat-icon>star_rate</mat-icon>
+                                <mat-icon>star_rate</mat-icon>
+                                <mat-icon>star_rate</mat-icon>
+                                <mat-icon>star_rate</mat-icon>
+                            </span>
+                        </div>
+                        <a aria-label="reviews" (click)="reviewsClicked()" class="review-link">({{product?.reviewsCount || 0}} reviews de clientes)</a>
+                    </div>
+
+                    <!-- Category -->
+                    <p class="product-category">
+                        Categoría: <a routerLink="/gifts" [queryParams]="{category: product?.categoryName}">{{product?.categoryName}}</a>
+                    </p>
+
+                    <!-- Short Desc -->
+                    <div class="product-short-description">
+                        <p>{{product?.shortDesc}}</p>
+                    </div>
+
+                    <!-- Product Details -->
+                    <form class="product-meta" [formGroup]="productForm" (ngSubmit)="buyClicked()" enctype="multipart/form-data">
+                        <!-- Variants -->
+                        <ng-container *ngIf="(product?.variants?.length || 0) > 1">
+                            <span>Variante:</span>
+                            <mat-chip-list>
+                                <mat-chip *ngFor="let vari of product?.variants" class="clicklable" [selected]="variant?.idVariant === vari.idVariant" [color]="variant?.idVariant === vari.idVariant ? 'primary' : ''" (click)="changeVariant(vari)">{{vari.nameVariant}}</mat-chip>
+                            </mat-chip-list>
+                        </ng-container>
+
+                        <!-- Delivery Date -->
+                        <span>Programar entrega:</span>
+                        <mat-chip-list aria-label="entregas">
+                            <ng-container *ngIf="variant?.stock; else elseDelivery">
+                                <ng-container *ngIf="deliveryDates | async as delyDates">
+                                    <mat-chip class="clicklable" (click)="datePicker.open()">Elegir fecha</mat-chip>
+                                    <mat-chip *ngIf="productForm.controls.deliveryDate.value" color="primary" selected>{{productForm.controls.deliveryDate.value | date: 'EEEE dd LLL'}} <mat-icon matChipRemove (click)="resetDateSelected()">cancel</mat-icon></mat-chip>
+                                    <!-- Datepicker -->
+                                    <input [matDatepicker]="datePicker" [hidden]="true" [min]="getDateFromString(delyDates.from)" [max]="getDateFromString(delyDates.to)" formControlName="deliveryDate" [matDatepickerFilter]="filterDates">
+                                    <mat-datepicker touchUi #datePicker [startAt]="getDateFromString(delyDates.from)"></mat-datepicker>
+                                </ng-container>
+                            </ng-container>
+                            <ng-template #elseDelivery>
+                                <mat-chip>No disponible</mat-chip>
+                            </ng-template>
+                        </mat-chip-list>
+
+                        <!-- Delivery Time -->
+                        <span>Horario:</span>
+                        <mat-chip-list>
+                            <mat-chip *ngFor="let time of deliveryTimes | async" class="clicklable" [color]="productForm.controls.idDeliveryTime.value === time.id ? 'primary' : ''" [selected]="productForm.controls.idDeliveryTime.value === time.id" (click)="productForm.patchValue({ idDeliveryTime: time.id })" selectable>{{time.name}}</mat-chip>
+                        </mat-chip-list>
+
+                        <mat-divider></mat-divider>
+
+                        <ng-container *ngIf="variant?.custNumber || variant?.custLetter || variant?.custMessage">
+                            <mat-form-field appearance="fill" [hintLabel]="variant?.custMessage ? 'Personaliza el regalo' : ''">
+                                <mat-label>
+                                    <ng-container [ngSwitch]="true">
+                                        <ng-container *ngSwitchCase="variant?.custNumber">Número del 0 al 9</ng-container>
+                                        <ng-container *ngSwitchCase="variant?.custLetter">Letra de la A a la Z</ng-container>
+                                        <ng-container *ngSwitchCase="variant?.custMessage">Frase en el regalo</ng-container>
+                                    </ng-container>
+                                </mat-label>
+                                <input matInput [type]="variant?.custNumber ? 'number' : 'text'" min="0" max="9" [maxlength]="variant?.custLetter ? 1 : (variant?.messageLength || 15)" required formControlName="specialTxt" [appOnlyLetters]="variant?.custLetter || false" autocomplete="off">
+                                <mat-hint align="end">{{productForm.controls.specialTxt.value?.length || 0}} / {{variant?.custMessage ? (variant?.messageLength || 15) : '1'}}</mat-hint>
+                                <mat-error *ngIf="productForm.hasError('required', 'specialTxt')">Requerido</mat-error>
+                                <mat-error *ngIf="productForm.hasError('maxlength', 'specialTxt')">Excediste el número de caracteres</mat-error>
+                                <mat-error *ngIf="productForm.hasError('min', 'specialTxt')">El mínimo es 0</mat-error>
+                                <mat-error *ngIf="productForm.hasError('min', 'specialTxt')">El máximo es 9</mat-error>
+                            </mat-form-field>
+                        </ng-container>
+
+                        <div class="space-between">
+                            <div>
+                                <button type="submit" mat-raised-button color="accent" aria-label="comprar" [disabled]="productForm.invalid">AGREGAR AL CARRITO</button>
+                            </div>
+                            <div>
+                                <button type="button" mat-stroked-button aria-label="agregar a favoritos" (click)="favoriteClicked()" [color]="isFavorite ? 'accent' : ''">
+                                    <mat-icon>{{isFavorite ? 'favorite' : 'favorite_border'}}</mat-icon> 
+                                    <ng-container *ngIf="!isFavorite">Agregar a favoritos</ng-container>
+                                    <ng-container *ngIf="isFavorite">Quitar de favoritos</ng-container>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <p>Entregas en CDMX y Estado de México</p>
+                    <button type="button" mat-stroked-button color="warn" aria-label="coverage" (click)="showCoverageMap()">
+                        <mat-icon>map</mat-icon>&nbsp;Ver cobertura de entregas
+                    </button>
+    
+                    <!-- Share -->
+                    <app-share-product [product]="product"></app-share-product>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description & Reviews -->
+    <div class="section product-tabs-wrapper" id="reviews">
+        <mat-tab-group mat-align-tabs="start" [selectedIndex]="tabSelected">
+            <!-- Description -->
+            <mat-tab label="Descripción">
+                <div class="tab-section">
+                    {{product?.largeDesc}}
+                </div>
+            </mat-tab>
+
+            <!-- Reviews -->
+            <mat-tab [label]="'Reviews ('+ (product?.reviewsCount || 0) +')'">
+                <h2>Puntuación del producto</h2>
+                <mat-list>
+                    <mat-list-item *ngFor="let rev of (reviews | async | slice: pageLow : pageHigh); last as isLast">
+                        <div mat-line>{{rev.customerName}}&nbsp;&nbsp;<small class="review-date">{{rev.created | date:'dd/MM/yyyy'}}</small></div>
+                        <div mat-line class="product-rating">
+                            <div class="star-rating">
+                                <span class="rating-bg">
+                                    <mat-icon>star_rate</mat-icon>
+                                    <mat-icon>star_rate</mat-icon>
+                                    <mat-icon>star_rate</mat-icon>
+                                    <mat-icon>star_rate</mat-icon>
+                                    <mat-icon>star_rate</mat-icon>
+                                </span>
+                                <span class="rating-fg" [style]="{width: ((rev.stars || 0) * 100 / 5) + '%' }">
+                                    <mat-icon>star_rate</mat-icon>
+                                    <mat-icon>star_rate</mat-icon>
+                                    <mat-icon>star_rate</mat-icon>
+                                    <mat-icon>star_rate</mat-icon>
+                                    <mat-icon>star_rate</mat-icon>
+                                </span>
+                            </div>
+                        </div>
+                        <div mat-line><h3 class="rev-title">{{rev.title}}</h3></div>
+                        <p class="review-line" mat-line *ngIf="rev.review">{{rev.review}}</p>
+                        <mat-divider *ngIf="!isLast"></mat-divider>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="!(reviews | async)?.length">
+                        <div mat-line class="review-line"><p>Aún no tiene calificaciones este producto :(</p></div>
+                    </mat-list-item>
+                </mat-list>
+                <mat-paginator [length]="(reviews | async)?.length || 0" pageSize="4" (page)="onPaginatorPage($event)"></mat-paginator>
+            </mat-tab>
+
+            <!-- Deliveries -->
+            <mat-tab label="Información de envío">
+                <h3>Envío de {{product?.name}}</h3>
+                <p>Se puede programar para entregarse a partir del día <ng-container *ngIf="deliveryDates | async as dd">{{dd.from | date:"EEEE dd 'de' MMMM 'de' yyyy"}}</ng-container></p>
+                <p>Todas nuestras entregas las realizamos con la mejor calidad posible y respetando las normas de salud para evitar contagios de SARS-CoV-2 COVID-19.</p>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</main>
+
+<ng-template #elseProduct>
+    <main>
+        <div class="section center">
+            <h1>Cargando...</h1>
+        </div>
+    </main>
+</ng-template>

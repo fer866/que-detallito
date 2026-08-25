@@ -1,0 +1,238 @@
+<main *ngIf="order | async as ord">
+    <div class="section">
+        <div><h2>Detalles de Orden #{{ord.id}} del {{ord.orderYear}}</h2></div>
+        <div>
+            <button mat-stroked-button aria-label="regresar" routerLink="/dashboard/sales">
+                <mat-icon>arrow_back</mat-icon> Regresar a ventas
+            </button>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="row-flex">
+
+            <!-- PRODUCTS -->
+            <div class="col s12">
+                <div><h3>Productos Comprados</h3></div>
+                <div class="table-container">
+                    <mat-table [dataSource]="products">
+                        <!-- Image -->
+                        <ng-container matColumnDef="image">
+                            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                            <mat-cell *matCellDef="let p">
+                                <a routerLink="/dashboard/products" class="product-thumbnail">
+                                    <img [alt]="p.name" [src]="p.urlLocation">
+                                </a>
+                            </mat-cell>
+                            <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+                        </ng-container>
+    
+                        <!-- IdProduct -->
+                        <ng-container matColumnDef="idProduct">
+                            <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+                            <mat-cell *matCellDef="let p">{{p.idProduct}}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                        </ng-container>
+        
+                        <!-- Name -->
+                        <ng-container matColumnDef="name">
+                            <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+                            <mat-cell *matCellDef="let p">{{p.name}}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                        </ng-container>
+        
+                        <!-- NameVariant -->
+                        <ng-container matColumnDef="nameVariant">
+                            <mat-header-cell *matHeaderCellDef>Variante</mat-header-cell>
+                            <mat-cell *matCellDef="let p">{{p.nameVariant}}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                        </ng-container>
+    
+                        <!-- SpecialTxt -->
+                        <ng-container matColumnDef="specialTxt">
+                            <mat-header-cell *matHeaderCellDef>Texto Especial</mat-header-cell>
+                            <mat-cell *matCellDef="let p">{{p.specialTxt}}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                        </ng-container>
+    
+                        <!-- Quantity -->
+                        <ng-container matColumnDef="quantity">
+                            <mat-header-cell *matHeaderCellDef>Cantidad</mat-header-cell>
+                            <mat-cell *matCellDef="let p">{{p.quantity}}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef>{{getTotalQuantity()}}</mat-footer-cell>
+                        </ng-container>
+    
+                        <!-- Cost -->
+                        <ng-container matColumnDef="cost">
+                            <mat-header-cell *matHeaderCellDef>Costo</mat-header-cell>
+                            <mat-cell *matCellDef="let p">{{(p.cost * p.quantity) | currency}}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef>{{getTotalCost() | currency}}</mat-footer-cell>
+                        </ng-container>
+    
+                        <!-- Price -->
+                        <ng-container matColumnDef="price">
+                            <mat-header-cell *matHeaderCellDef>Precio</mat-header-cell>
+                            <mat-cell *matCellDef="let p">
+                                {{(p.price * p.quantity) | currency}}
+                                <span *ngIf="p.discount">&nbsp;{{p.discount}}%</span>
+                            </mat-cell>
+                            <mat-footer-cell *matFooterCellDef>{{getTotalPrice() | currency}}</mat-footer-cell>
+                        </ng-container>
+    
+                        <mat-header-row *matHeaderRowDef="displayCols"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayCols"></mat-row>
+    
+                        <mat-footer-row *matFooterRowDef="displayCols" class="bold"></mat-footer-row>
+    
+                        <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="8">No existe información para mostrar</td>
+                        </tr>
+                    </mat-table>
+                </div>
+            </div>
+
+            <!-- DELIVERY -->
+            <div class="col s12 m6">
+                <div><h3>Dirección de Entrega</h3></div>
+                <mat-card>
+                    <mat-card-header class="header-wrap">
+                        <mat-card-title>{{ord.nameDelivery}}</mat-card-title>
+                        <mat-card-subtitle>Tel: <a [href]="'tel:' + (ord.deliveryPhone || '')" aria-label="teléfono" matTooltip="Llamar al número">{{ord.deliveryPhone}}</a></mat-card-subtitle>
+                        <div class="flex-end">
+                            <a mat-icon-button matTooltip="Ver en Maps" (click)="getMapsUrl(ord)"><mat-icon>directions</mat-icon></a>
+                        </div>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-list>
+                            <!-- Delivery Date -->
+                            <mat-list-item>
+                                <mat-icon mat-list-icon>today</mat-icon>
+                                <div mat-line>{{ord.deliveryDate | date:'EEEE, d MMMM, yyyy'}}</div>
+                            </mat-list-item>
+
+                            <!-- Delivery Time -->
+                            <mat-list-item>
+                                <mat-icon mat-list-icon>schedule</mat-icon>
+                                <div mat-line>{{ord.deliveryTime}}</div>
+                            </mat-list-item>
+
+                            <!-- Street -->
+                            <mat-list-item>
+                                <mat-icon mat-list-icon>home</mat-icon>
+                                <div mat-line>{{ord.street}} # {{ord.deliveryNumber}}</div>
+                            </mat-list-item>
+
+                            <!-- Special Address -->
+                            <ng-container *ngIf="ord.specialAddress">
+                                <mat-list-item>
+                                    <mat-icon mat-list-icon>home_work</mat-icon>
+                                    <div mat-line>{{ord.specialAddress}}</div>
+                                </mat-list-item>
+                            </ng-container>
+
+                            <!-- Suburb -->
+                            <mat-list-item>
+                                <mat-icon mat-list-icon>add_road</mat-icon>
+                                <div mat-line>{{ord.suburb}}</div>
+                            </mat-list-item>
+
+                            <!-- Town -->
+                            <mat-list-item>
+                                <mat-icon mat-list-icon>location_city</mat-icon>
+                                <div mat-line>{{ord.town}}, C.P. {{ord.zipCode}}</div>
+                                <div mat-line>{{ord.deliveryState}}</div>
+                            </mat-list-item>
+                        </mat-list>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+            <!-- DETAILS -->
+            <div class="col s12 m6">
+                <div><h3>Detalles de la Orden</h3></div>
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>Estatus {{ord.orderStatus}}</mat-card-title>
+                        <mat-card-subtitle>{{ord.paymentMethod}}<span *ngIf="ord.paymentMethodDetails">&nbsp;{{ord.paymentMethodDetails}}</span></mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <!-- Cost -->
+                        <div class="payment-line">
+                            <span>Costo</span>
+                            <strong>{{ord.totalCost | currency}}</strong>
+                        </div>
+                        <!-- Discount -->
+                        <div class="payment-line" *ngIf="ord.discount">
+                            <span>Descuento <em>{{ord.discountCode}}</em></span>
+                            <strong>{{ord.discount}}%</strong>
+                        </div>
+                        <!-- Delivery Cost -->
+                        <div class="payment-line">
+                            <span>Costo de Envío</span>
+                            <strong>{{ord.deliveryCost | currency}}</strong>
+                        </div>
+                        <!-- Price -->
+                        <div class="payment-line">
+                            <span>Precio (incluye envío)</span>
+                            <strong>{{ord.totalPrice | currency}} <del *ngIf="ord.totalPrice !== (getTotalPrice() + (ord.deliveryCost || 0))">{{getTotalPrice() | currency}}</del></strong>
+                        </div>
+                        <!-- Net Amount -->
+                        <div class="payment-line border-top">
+                            <span>Utilidad</span>
+                            <strong>{{((ord.totalPrice || 0) - (ord.totalCost || 0)) | currency}}</strong>
+                        </div>
+                        <!-- Payment Details -->
+                        <div class="note-line">
+                            <strong>Detalles del Pago</strong>
+                            <span>{{ord.paymentDetails}}</span>
+                        </div>
+                        <!-- Remark -->
+                        <div class="note-line" *ngIf="ord.remark">
+                            <strong>Observaciones de la cancelación</strong>
+                            <span>{{ord.remark}}</span>
+                        </div>
+                        <!-- Sender -->
+                        <div class="note-line" *ngIf="ord.sender">
+                            <strong>Remitente</strong>
+                            <span>{{ord.sender}}</span>
+                        </div>
+                        <!-- Font -->
+                        <div class="note-line" *ngIf="ord.font">
+                            <strong>Tipo de Letra</strong>
+                            <span>{{ord.font}}</span>
+                        </div>
+                        <!-- Note -->
+                        <div class="note-line" *ngIf="ord.note">
+                            <strong>Mensaje</strong>
+                            <em>{{ord.note}}</em>
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions *ngIf="ord.idStatus !== 2 && ord.idStatus !== 8">
+                        <button mat-button color="primary" (click)="openChangeStatus(ord)">Cambiar estatus</button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+
+            <!-- CUSTOMER DETAILS -->
+            <div class="col s12 m6 pull-m6">
+                <div><h3>Datos del Cliente</h3></div>
+                <mat-card>
+                    <mat-card-header>
+                        <mat-card-title>{{ord.customerName}}</mat-card-title>
+                        <mat-card-subtitle>#{{ord.idCustomer}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div class="list-detail">
+                            <mat-icon>email</mat-icon>
+                            <a [href]="'mailto:' + (ord.customerEmail || '')" matTooltip="Redactar correo">{{ord.customerEmail}}</a>
+                        </div>
+                        <div class="list-detail">
+                            <mat-icon>phone</mat-icon>
+                            <a [href]="'tel:' + (ord.customerPhone || '')" matTooltip="Llamar al número">{{ord.customerPhone}}</a>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</main>

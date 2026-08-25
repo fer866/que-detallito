@@ -1,0 +1,30 @@
+footer {
+    background-color: var(--footer);
+    color: var(--foreground);
+    padding: 2em;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.section.row-flex {
+    margin: 25px auto !important;
+}
+.center {
+    text-align: center;
+}
+.section.row-flex.bottom {
+    margin: 50px auto 0 !important;
+}
+.footer-col {
+    span, a {
+        display: block;
+    }
+}
+.social {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 24px;
+}

@@ -1,0 +1,92 @@
+<main>
+    <div class="section" *ngIf="!edit">
+        <h2>Selecciona el catálogo:</h2>
+        <div class="space-between">
+            <mat-form-field>
+                <mat-label>Catálogo</mat-label>
+                <mat-select [(value)]="selected" (selectionChange)="catalogChange($event)">
+                    <mat-option *ngFor="let t of listCatalogType" [value]="t.id">{{t.name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div>
+                <button mat-stroked-button color="primary" (click)="edit = true">Agregar nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <ng-container *ngIf="selected === 5; else elseCat">
+            <app-delivery-times (editChange)="edit = $event" [edit]="edit"></app-delivery-times>
+        </ng-container>
+
+        <ng-template #elseCat>
+
+            <ng-container *ngIf="!edit">
+                <div class="space-between">
+                    <mat-form-field>
+                        <mat-label>Buscar Horarios</mat-label>
+                        <input matInput type="text" (keyup)="applyFilter($event)">
+                        <mat-icon matSuffix>search</mat-icon>
+                    </mat-form-field>
+                    <button mat-icon-button (click)="getCatalog()" matTooltip="Refrescar"><mat-icon>refresh</mat-icon></button>
+                </div>
+                <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z3">
+                    <!-- ID -->
+                    <ng-container matColumnDef="id">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                        <mat-cell *matCellDef="let cat">{{cat.id}}</mat-cell>
+                    </ng-container>
+    
+                    <!-- Name -->
+                    <ng-container matColumnDef="name">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+                        <mat-cell *matCellDef="let cat">{{cat.name}}</mat-cell>
+                    </ng-container>
+    
+                    <!-- Creation Date -->
+                    <ng-container matColumnDef="created">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de creación</mat-header-cell>
+                        <mat-cell *matCellDef="let cat">{{cat.created | date: 'dd/MM/yyyy'}}</mat-cell>
+                    </ng-container>
+    
+                    <!-- Edit -->
+                    <ng-container matColumnDef="edit">
+                        <mat-header-cell *matHeaderCellDef>Editar</mat-header-cell>
+                        <mat-cell *matCellDef="let cat">
+                            <button type="button" mat-icon-button aria-label="editar" (click)="editCatalog(cat)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </mat-cell>
+                    </ng-container>
+        
+                    <mat-header-row *matHeaderRowDef="displayCols"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayCols;"></mat-row>
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell">No existe información para mostrar</td>
+                    </tr>
+                </mat-table>
+        
+                <mat-paginator [pageSizeOptions]="[15, 30, 50]" showFirstLastbuttons></mat-paginator>
+            </ng-container>
+    
+            <ng-container *ngIf="edit">
+                <h2>Agregar {{listCatalogType[selected - 1].name}}</h2>
+                <form [formGroup]="catalogForm" (ngSubmit)="submitCatalog()" enctype="multipart/form-data" class="row-flex">
+                    <mat-form-field class="col s12 m4 pull-m8">
+                        <mat-label>Nombre del catálogo</mat-label>
+                        <input type="text" minlength="1" maxlength="30" matInput formControlName="name" required>
+                        <mat-error *ngIf="catalogForm.hasError('required', 'name')">Este campo es requerido</mat-error>
+                        <mat-error *ngIf="catalogForm.hasError('maxlength', 'name')">Debe tener hasta máximo 30 caracteres</mat-error>
+                        <mat-hint align="end">{{catalogForm.controls.name.value?.length || 0}} / 30</mat-hint>
+                    </mat-form-field>
+    
+                    <div class="col s12 btn-section">
+                        <button mat-raised-button color="primary" type="submit">Guardar</button>
+                        <button mat-raised-button type="button" (click)="resetForm()">Cancelar</button>
+                    </div>
+                </form>
+            </ng-container>
+
+        </ng-template>
+    </div>
+</main>

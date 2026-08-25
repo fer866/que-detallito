@@ -1,0 +1,10 @@
+.space-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mat-column-id,
+.mat-column-edit {
+    max-width: 60px;
+}

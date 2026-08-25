@@ -1,0 +1,27 @@
+<div class="row-flex product-images no-m">
+    <div class="col s12 m10 order-m2">
+        <div class="product-thump">
+            <div class="product-flashs" *ngIf="variant?.discount && variant?.discount !== 0">
+                <span class="product-flash">-{{variant?.discount}}%</span>
+            </div>
+            <figure>
+                <div class="product-image-wrap">
+                    <img role="presentation" [alt]="product?.name" [src]="getCurrentImage()">
+                </div>
+            </figure>
+        </div>
+    </div>
+    <div class="col s12 m2 order-m1">
+        <div class="slick-slider">
+            <div class="slick-list">
+                <div class="slick-track">
+                    <ng-container *ngFor="let img of variant?.images; index as i">
+                        <div class="product-thumbnails" (click)="changeImage(img)" [ngClass]="currentImage?.noImage == img.noImage ? 'thumbnail-active' : ''">
+                            <img [src]="img.urlLocation" alt="thumbnail" [title]="i + 2">
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

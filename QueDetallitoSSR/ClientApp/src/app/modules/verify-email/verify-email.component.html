@@ -1,0 +1,62 @@
+<header class="header-medium" aria-label="Inicio">
+    <div class="header-section">
+        <div class="header-headline">
+            <h1><mat-icon>mark_email_read</mat-icon> Verificar Correo</h1>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="section">
+        <div class="row-flex" *ngIf="!showResetPassword">
+            <div class="col s12 m8 push-m2 pull-m2 l6 push-l3 pull-l3">
+                <h2 *ngIf="!finished">Estamos validando la información...</h2>
+
+                <ng-container *ngIf="finished">
+                    <h1 *ngIf="!valid">Ups! algo salió mal</h1>
+                    <h1 *ngIf="valid">¡Excelentes noticias!</h1>
+                    <p>{{message}}</p>
+                    <p>Serás direccionado en 7 segundos...</p>
+                    <div *ngIf="!valid" class="center">
+                        <a mat-flat-button color="accent" aria-label="home" routerLink="/home">Ir al inico</a>
+                    </div>
+                    <div *ngIf="valid" class="center">
+                        <a mat-flat-button color="accent" aria-label="home" routerLink="/login">Iniciar sesión</a>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <form class="row-flex" [formGroup]="passwordForm" (ngSubmit)="onChangePasswordSubmit()" enctype="multipart/form-data" *ngIf="showResetPassword">
+            <div class="center col s12">
+                <h2>Captura tu nueva contraseña</h2>
+            </div>
+
+            <!-- Password -->
+            <mat-form-field appearance="fill" class="col s12 m6 push-m3 pull-m3 l4 push-l4 pull-l4">
+                <mat-label>Contraseña</mat-label>
+                <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" aria-label="contraseña">
+                <button mat-icon-button matSuffix aria-label="show/hide" type="button" (click)="showPassword = !showPassword">
+                    <mat-icon>{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                </button>
+                <mat-hint>Debe tener al menos una mayúscula, una minúscula y un número</mat-hint>
+                <mat-error *ngIf="passwordForm.hasError('required', 'password')">La contraseña es requerida</mat-error>
+                <mat-error *ngIf="passwordForm.hasError('minLength', 'password')">Debe contener al menos 8 caracteres</mat-error>
+                <mat-error *ngIf="passwordForm.hasError('pattern', 'password')">Debe tener al menos una mayúscula, una minúscula y un número</mat-error>
+            </mat-form-field>
+
+            <!-- Repeat Password -->
+            <mat-form-field appearance="fill" class="col s12 m6 push-m3 pull-m3 l4 push-l4 pull-l4">
+                <mat-label>Repetir contraseña</mat-label>
+                <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="repeatPassword" aria-label="repetir contraseña">
+                <mat-hint>Asegúrate de escribir la misma contraseña que la anterior</mat-hint>
+                <mat-error *ngIf="passwordForm.hasError('required', 'repeatPassword')">La repetición de contraseña es requerida</mat-error>
+                <mat-error *ngIf="passwordForm.hasError('notSame')">La contraseña no coincide con la anterior</mat-error>
+            </mat-form-field>
+
+            <div class="col s12 center btn-section">
+                <button type="submit" mat-raised-button color="accent" [disabled]="passwordForm.invalid">Cambiar Contraseña</button>
+            </div>
+        </form>
+    </div>
+</main>

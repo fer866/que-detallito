@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Cobertura en CDMX y Edo. de México</h1>
+
+<div mat-dialog-content>
+    <picture>
+        <source srcset="assets/coverage.webp" type="image/webp">
+        <source srcset="assets/coverage.png" type="image/png">
+        <img src="assets/coverage.png" alt="cobertura">
+    </picture>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="goToCoverage()">Municipios y Alcaldías</button>
+    <button mat-button cdkFocusInitial mat-dialog-close>Cerrar</button>
+</div>

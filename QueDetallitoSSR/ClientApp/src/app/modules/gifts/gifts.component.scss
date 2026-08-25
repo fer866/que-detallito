@@ -1,0 +1,115 @@
+@import '../../../styles/variables';
+
+mat-form-field {
+    display: block;
+}
+.section {
+    padding: 0 !important;
+    margin: 0 0 20px !important;
+}
+.action-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+.section-products {
+    width: 100%;
+}
+.section-product {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.product-container {
+    position: relative;
+    width: 125px;
+    height: 125px;
+    margin: 0 0 1.16em;
+    padding: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    @media #{medium-and-up} {
+        width: 140px;
+        height: 140px;
+    }
+    img {
+        width: 100%;
+        height: auto;
+        margin-top: -25%;
+    }
+}
+.product-desc {
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+    .p-name {
+        font-size: 1.16em;
+        line-height: 1.57em;
+        display: block;
+    }
+    .p-price {
+        font-weight: 700;
+        font-size: 1.7em;
+        line-height: 1.44em;
+        display: block;
+    }
+}
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    div {
+        margin-bottom: 15px;
+    }
+}
+.breadcrumbs-section {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.breadcrumbs-wrap {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 20px;
+    margin-bottom: 10px;
+
+    .breadcrumbs-nav {
+        position: relative;
+        font-size: 15px;
+        flex: 1 1 auto;
+    }
+}
+.breadcrumbs-nav {
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    a {
+        display: flex;
+        align-items: center;
+        font-weight: 400;
+        color: var(--foreground);
+        text-decoration: none;
+        margin-right: 6px;
+    }
+    a:after {
+        content: '>';
+        font-size: 10px;
+        color: var(--foreground);
+        margin-left: 5px;
+    }
+    .breadcrumb-last {
+        margin-right: 0;
+        color: var(--foreground);
+        font-weight: 600;
+    }
+}

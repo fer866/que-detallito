@@ -1,0 +1,138 @@
+<h2 class="section-title">
+    <mat-icon>account_circle</mat-icon> Información personal
+</h2>
+
+<div class="row-flex no-m" *ngIf="!editInfo && !showPasswordForm && !showEmailForm">
+    <div class="col s12 m6 no-m">
+        <h3>
+            <mat-icon>account_box</mat-icon>&nbsp;Nombre
+        </h3>
+        <p>{{user?.name}}</p>
+    </div>
+    <div class="col s12 m6 no-m">
+        <h3>
+            <mat-icon>perm_identity</mat-icon>&nbsp;Apellidos
+        </h3>
+        <p>{{user?.lastName}}</p>
+    </div>
+    <div class="col s12 m6 no-m">
+        <h3>
+            <mat-icon>email</mat-icon>&nbsp;Correo electrónico
+        </h3>
+        <p>{{user?.email}}</p>
+    </div>
+    <div class="col s12 m6 no-m">
+        <h3>
+            <mat-icon>call</mat-icon>&nbsp;Número de teléfono
+        </h3>
+        <p>{{user?.phone}}</p>
+    </div>
+
+    <div class="col s12 center btn-section">
+        <button mat-raised-button (click)="editPersonalInfo()">Actualizar</button>
+        <button mat-raised-button color="primary" (click)="showEmailForm = true">Cambiar correo</button>
+        <button mat-raised-button color="accent" (click)="showPasswordForm = true">Cambiar contraseña</button>
+    </div>
+</div>
+
+<ng-container *ngIf="editInfo">
+    <form class="row-flex no-m" enctype="multipart/form-data" [formGroup]="personalForm" (ngSubmit)="personalSubmit()">
+        <!-- Name -->
+        <mat-form-field class="col s12 l6">
+            <mat-label>Nombre</mat-label>
+            <input type="text" matInput minlength="3" maxlength="50" formControlName="name" autocomplete="given-name" required>
+            <mat-hint>{{personalForm.controls.name.value?.length || 0}} / 50</mat-hint>
+            <mat-error *ngIf="personalForm.hasError('required', 'name')">El nombre es requerido</mat-error>
+            <mat-error *ngIf="personalForm.hasError('minlength', 'name')">Debe contener mínimo 3 caracteres</mat-error>
+        </mat-form-field>
+    
+        <!-- Last Name -->
+        <mat-form-field class="col s12 l6">
+            <mat-label>Apellidos</mat-label>
+            <input type="text" matInput minlength="3" maxlength="50" formControlName="lastName" autocomplete="family-name" required>
+            <mat-hint>{{personalForm.controls.lastName.value?.length || 0}} / 50</mat-hint>
+            <mat-error *ngIf="personalForm.hasError('required', 'lastName')">El nombre es requerido</mat-error>
+            <mat-error *ngIf="personalForm.hasError('minlength', 'lastName')">Debe contener mínimo 3 caracteres</mat-error>
+        </mat-form-field>
+    
+        <!-- Email -->
+        <mat-form-field class="col s12 l6">
+            <mat-label>Correo electrónico</mat-label>
+            <input type="email" matInput formControlName="email">
+        </mat-form-field>
+    
+        <!-- Phone -->
+        <mat-form-field class="col s12 l6">
+            <mat-label>Número de teléfono</mat-label>
+            <input matInput type="text" formControlName="phone" minlength="10" maxlength="10" autocomplete="tel-national" required>
+            <mat-hint>Número a 10 dígitos</mat-hint>
+            <mat-error *ngIf="personalForm.hasError('required', 'phone')">El teléfono es requerido</mat-error>
+            <mat-error *ngIf="personalForm.hasError('pattern', 'phone')">Sólo se permiten números</mat-error>
+            <mat-error *ngIf="personalForm.hasError('minlength', 'phone')">Debe contener mínimo 10 dígitos</mat-error>
+        </mat-form-field>
+    
+        <div class="col s12 center btn-section">
+            <button type="submit" mat-raised-button color="accent" [disabled]="personalForm.invalid">Actualizar</button>
+            <button type="button" mat-raised-button (click)="resetPersonalForm()">Cancelar</button>
+        </div>
+    </form>
+</ng-container>
+
+<ng-container *ngIf="showPasswordForm">
+    <form class="row-flex no-m" [formGroup]="newPasswordForm" (ngSubmit)="onNewPasswordSubmit()" enctype="multipart/form-data">
+        <!-- Old Password -->
+        <mat-form-field class="col s12 m6 pull-m6">
+            <mat-label>Contraseña actual</mat-label>
+            <input [type]="showOldPassword ? 'text' : 'password'" matInput minlength="8" maxlength="16" required formControlName="oldPassword" autocomplete="current-password">
+            <button type="button" matSuffix mat-icon-button (click)="showOldPassword = !showOldPassword">
+                <mat-icon>{{showOldPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="newPasswordForm.hasError('required', 'oldPassword')">Es necesaria tu contraseña actual</mat-error>
+            <mat-error *ngIf="newPasswordForm.hasError('minlength', 'oldPassword')">Debe tener mínimo 8 caracteres</mat-error>
+            <mat-error *ngIf="newPasswordForm.hasError('pattern', 'oldPassword')">Debe tener al menos una mayúscula, una minúscula y un número</mat-error>
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field class="col s12 m6 pull-m6">
+            <mat-label>Nueva Contraseña</mat-label>
+            <input [type]="showPassword ? 'text' : 'password'" matInput minlength="8" maxlength="16" required formControlName="password" autocomplete="new-password">
+            <button type="button" matSuffix mat-icon-button (click)="showPassword = !showPassword">
+                <mat-icon>{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="newPasswordForm.hasError('required', 'password')">Es necesaria tu nueva contraseña</mat-error>
+            <mat-error *ngIf="newPasswordForm.hasError('minlength', 'password')">Debe tener mínimo 8 caracteres</mat-error>
+            <mat-error *ngIf="newPasswordForm.hasError('maxlength', 'password')">Debe tener máximo 16 caracteres</mat-error>
+            <mat-error *ngIf="newPasswordForm.hasError('pattern', 'password')">Debe tener al menos una mayúscula, una minúscula y un número</mat-error>
+        </mat-form-field>
+
+        <!-- Repeat Password -->
+        <mat-form-field class="col s12 m6 pull-m6">
+            <mat-label>Repite la nueva Contraseña</mat-label>
+            <input [type]="showPassword ? 'text' : 'password'" matInput minlength="8" maxlength="16" required formControlName="repeatPassword" autocomplete="new-password">
+            <mat-error *ngIf="newPasswordForm.hasError('required', 'repeatPassword')">La repetición de contraseña es requierda</mat-error>
+            <mat-error *ngIf="newPasswordForm.hasError('notSame')">La constraseña no coincide con la anterior</mat-error>
+        </mat-form-field>
+
+        <div class="center btn-section">
+            <button type="submit" mat-raised-button color="primary" [disabled]="newPasswordForm.invalid">Actualizar</button>
+            <button mat-raised-button (click)="onResetPasswordForm()">Cancelar</button>
+        </div>
+    </form>
+</ng-container>
+
+<ng-container *ngIf="showEmailForm">
+    <form class="row-flex no-m" [formGroup]="newEmailForm" (ngSubmit)="onChangeEmailSubmit()" enctype="multipart/form-data">
+        <!-- Email -->
+        <mat-form-field class="col s12 m6 pull-m6">
+            <mat-label>Nuevo correo electrónico</mat-label>
+            <input type="email" matInput required formControlName="email" aria-label="email" autocomplete="email">
+            <mat-error *ngIf="newEmailForm.hasError('required', 'email')">Es necesario tu nuevo correo</mat-error>
+            <mat-error *ngIf="newEmailForm.hasError('email', 'email')">El correo no es válido</mat-error>
+        </mat-form-field>
+
+        <div class="center btn-section">
+            <button type="submit" mat-raised-button color="primary" [disabled]="newEmailForm.invalid">Actualizar</button>
+            <button mat-raised-button (click)="onResetEmailForm()">Cancelar</button>
+        </div>
+    </form>
+</ng-container>

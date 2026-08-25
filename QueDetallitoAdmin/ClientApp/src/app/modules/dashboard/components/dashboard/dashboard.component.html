@@ -1,0 +1,92 @@
+<mat-toolbar color="primary" class="mat-elevation-z6">
+    <button mat-icon-button aria-label="menu" (click)="toggleSidenav()"><mat-icon>menu</mat-icon></button>
+    <a mat-button aria-label="Que Detallito Admin" routerLink="/">
+        <img class="logo-img" alt="Que Detallito Admin" [src]="!(isDark | async) ? '../../../../../logo_sm.webp' : '../../../../../logo_sm_dark.webp'">
+    </a>
+
+    <span class="spacer"></span>
+
+    <!-- Name -->
+    <span *ngIf="!(mobile | async)">¡Hola {{(userData | async)?.name}}!</span>
+
+    <!-- Dark Theme Toggle -->
+    <button mat-icon-button aria-label="Tema oscuro" [matMenuTriggerFor]="themeMenu" matTooltip="Cambiar tema">
+        <mat-icon>invert_colors</mat-icon>
+    </button>
+    <mat-menu #themeMenu="matMenu">
+        <mat-radio-group class="radio-btn" (change)="themeChange($event)">
+            <mat-radio-button *ngFor="let opt of themeOptions" [value]="opt.option" [checked]="(themeOption | async) === opt.option">{{opt.name}}</mat-radio-button>
+        </mat-radio-group>
+    </mat-menu>
+
+    <!-- Account Settings -->
+    <button mat-icon-button aria-label="cuenta" matTooltip="Cuenta" [matMenuTriggerFor]="accountMenu">
+        <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #accountMenu="matMenu">
+        <ng-container *ngIf="(mobile | async)">
+            <button mat-menu-item type="button" disabled>
+                <mat-icon>account_box</mat-icon>
+                <span>¡Hola {{(userData | async)?.name}}!</span>
+            </button>
+        </ng-container>
+        <button mat-menu-item type="button" (click)="signOff()">
+            <mat-icon>logout</mat-icon>
+            <span>Cerrar sesión</span>
+        </button>
+    </mat-menu>
+</mat-toolbar>
+
+<mat-sidenav-container>
+    <mat-sidenav #sidenav [mode]="tablet ? 'over' : 'side'" [autoFocus]="false" fixedInViewport [fixedTopGap]="tablet ? 56 : 64" [opened]="!tablet">
+        <div class="sidenav-header">
+            <h3>Menú</h3>
+        </div>
+        <div class="sidenav-content">
+            <ul>
+                <li routerLinkActive="active">
+                    <a mat-button routerLink="/dashboard/resume" (click)="changeRouteMenu()">
+                        <mat-icon>assignment</mat-icon>&nbsp;Resumen
+                    </a>
+                </li>
+                <li routerLinkActive="active">
+                    <a mat-button routerLink="/dashboard/catalogs" (click)="changeRouteMenu()">
+                        <mat-icon>category</mat-icon>&nbsp;Catálogos
+                    </a>
+                </li>
+                <li routerLinkActive="active">
+                    <a mat-button routerLink="/dashboard/products" (click)="changeRouteMenu()">
+                        <mat-icon>storefront</mat-icon>&nbsp;Productos
+                    </a>
+                </li>
+                <li routerLinkActive="active">
+                    <a mat-button routerLink="/dashboard/calendar" (click)="changeRouteMenu()">
+                        <mat-icon>event</mat-icon>&nbsp;Calendario
+                    </a>
+                </li>
+                <li routerLinkActive="active">
+                    <a mat-button routerLink="/dashboard/users" (click)="changeRouteMenu()">
+                        <mat-icon>manage_accounts</mat-icon>&nbsp;Usuarios
+                    </a>
+                </li>
+                <li routerLinkActive="active">
+                    <a mat-button routerLink="/dashboard/promos" (click)="changeRouteMenu()">
+                        <mat-icon>new_releases</mat-icon>&nbsp;Promociones
+                    </a>
+                </li>
+                <hr>
+                <li routerLinkActive="active">
+                    <a mat-button routerLink="/dashboard/sales" (click)="changeRouteMenu()">
+                        <mat-icon>sell</mat-icon>&nbsp;Ventas
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <div class="app-sidenav-content" [@fade]="getAnimationData(o)">
+            <router-outlet #o="outlet"></router-outlet>
+        </div>
+    </mat-sidenav-content>
+</mat-sidenav-container>

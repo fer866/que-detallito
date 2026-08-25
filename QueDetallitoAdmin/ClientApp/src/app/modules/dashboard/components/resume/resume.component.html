@@ -1,0 +1,212 @@
+<main>
+    <div class="w-95">
+        <div class="row-flex">
+            <div class="col s12 m6 l6 xl3" *ngFor="let stat of stats | async; index as i">
+                <mat-card class="main-card" [style.background]="colors[i]">
+                    <mat-card-title>{{stat.description}}</mat-card-title>
+                    <mat-card-content>
+                        <mat-icon>bar_chart</mat-icon>
+                        <h3>{{stat.netAmount | currency}}</h3>
+                    </mat-card-content>
+                    <div class="card-divider"></div>
+                    <mat-card-actions>
+                        <div class="content">
+                            <span class="title">Ventas Brutas</span>
+                            <span class="title">No. de Ventas</span>
+                        </div>
+                        <div class="content">
+                            <span>{{stat.grossAmount | currency}}</span>
+                            <span>{{stat.count || 0}}</span>
+                        </div>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-95">
+        <div class="row-flex">
+            <div class="col s12 m12 l7">
+                <div class="row-flex no-m">
+                    <!-- Accounts -->
+                    <div class="col s12">
+                        <mat-card>
+                            <mat-card-header class="header-wrap">
+                                <mat-card-title>
+                                    Estadísticas&nbsp;
+                                    <button mat-icon-button aria-label="refrescar" (click)="getNumbers(dateOption)" title="Refrescar" matTooltip="Refrescar">
+                                        <mat-icon>refresh</mat-icon>
+                                    </button>
+                                </mat-card-title>
+                                <mat-card-subtitle>{{today | date: "dd 'de' MMMM 'de' yyyy"}}</mat-card-subtitle>
+                                <div class="flex-end">
+                                    <mat-button-toggle-group [value]="dateOption" name="dateRange" (change)="dateOptionChange($event)">
+                                        <mat-button-toggle [value]="1">Hoy</mat-button-toggle>
+                                        <mat-button-toggle [value]="2">Esta Semana</mat-button-toggle>
+                                        <mat-button-toggle [value]="3">Este Mes</mat-button-toggle>
+                                    </mat-button-toggle-group>
+                                </div>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="row-flex">
+                                    <div class="col s6 m3 numbers" *ngFor="let num of statNumbers | async">
+                                        <h4>{{num.count}}</h4>
+                                        <p class="tx-11 upper">{{num.name}}</p>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+
+                    <!-- Lastest Sales -->
+                    <div class="col s12 no-m">
+                        <mat-card>
+                            <mat-card-header class="header-wrap">
+                                <mat-card-title>Últimas Ventas</mat-card-title>
+                                <mat-card-subtitle>{{today | date: "dd 'de' MMMM 'de' yyyy"}}</mat-card-subtitle>
+                                <div class="flex-end">
+                                    <button mat-icon-button aria-label="refrescar" (click)="getLastestSales()" title="Refrescar" matTooltip="Refrescar">
+                                        <mat-icon>refresh</mat-icon>
+                                    </button>
+                                </div>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="table-container">
+                                    <mat-table [dataSource]="salesDataSource">
+                                        <!-- TotalProducts -->
+                                        <ng-container matColumnDef="totalProducts">
+                                            <mat-header-cell *matHeaderCellDef># Productos</mat-header-cell>
+                                            <mat-cell *matCellDef="let sale">{{sale.totalProducts}}</mat-cell>
+                                        </ng-container>
+            
+                                        <!-- TotalPrice -->
+                                        <ng-container matColumnDef="totalPrice">
+                                            <mat-header-cell *matHeaderCellDef>Precio</mat-header-cell>
+                                            <mat-cell *matCellDef="let sale">{{sale.totalPrice | currency}}</mat-cell>
+                                        </ng-container>
+            
+                                        <!-- DeliveryDate -->
+                                        <ng-container matColumnDef="deliveryDate">
+                                            <mat-header-cell *matHeaderCellDef>Fecha Entrega</mat-header-cell>
+                                            <mat-cell *matCellDef="let sale">{{sale.deliveryDate | date:'dd/MM/yyyy'}}</mat-cell>
+                                        </ng-container>
+                                        
+                                        <!-- Address -->
+                                        <ng-container matColumnDef="deliveryAddress">
+                                            <mat-header-cell *matHeaderCellDef>Dirección</mat-header-cell>
+                                            <mat-cell *matCellDef="let sale">{{sale.deliveryAddress}}</mat-cell>
+                                        </ng-container>
+            
+                                        <!-- Created -->
+                                        <ng-container matColumnDef="created">
+                                            <mat-header-cell *matHeaderCellDef>Creado</mat-header-cell>
+                                            <mat-cell *matCellDef="let sale">{{sale.created | date:'short'}}</mat-cell>
+                                        </ng-container>
+            
+                                        <!-- Details -->
+                                        <ng-container matColumnDef="details">
+                                            <mat-header-cell *matHeaderCellDef>Ver más</mat-header-cell>
+                                            <mat-cell *matCellDef="let sale">
+                                                <a mat-icon-button [routerLink]="['/dashboard/sales', sale.id, sale.orderYear]">
+                                                    <mat-icon>open_in_new</mat-icon>
+                                                </a>
+                                            </mat-cell>
+                                        </ng-container>
+            
+                                        <mat-header-row *matHeaderRowDef="salesDisplayCols"></mat-header-row>
+                                        <mat-row *matRowDef="let row; columns: salesDisplayCols;"></mat-row>
+                                        <tr class="mat-row" *matNoDataRow>
+                                            <td class="mat-cell" colspan="6">No hay ventas registradas</td>
+                                        </tr>
+                                    </mat-table>
+                                </div>
+                            </mat-card-content>
+                            <mat-card-actions>
+                                <a mat-button routerLink="/dashboard/sales">Ver todas</a>
+                            </mat-card-actions>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col s12 m12 l5">
+                <div class="row-flex no-m">
+                    <!-- Carrito -->
+                    <div class="col s12">
+                        <mat-card>
+                            <mat-card-header class="header-wrap">
+                                <mat-card-title>Productos en carrito ({{cartDataSource.data.length || 0}})</mat-card-title>
+                                <mat-card-subtitle>De clientes registrados</mat-card-subtitle>
+                                <div class="flex-end">
+                                    <button mat-icon-button aria-label="refrescar" (click)="getCartItems()" title="Refrescar" matTooltip="Refrescar">
+                                        <mat-icon>refresh</mat-icon>
+                                    </button>
+                                </div>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <div class="table-container">
+                                    <mat-table [dataSource]="cartDataSource">            
+                                        <!-- Name -->
+                                        <ng-container matColumnDef="name">
+                                            <mat-header-cell *matHeaderCellDef>Producto</mat-header-cell>
+                                            <mat-cell *matCellDef="let cart">{{cart.name}}</mat-cell>
+                                        </ng-container>
+            
+                                        <!-- Name Variant -->
+                                        <ng-container matColumnDef="nameVariant">
+                                            <mat-header-cell *matHeaderCellDef>Variante</mat-header-cell>
+                                            <mat-cell *matCellDef="let cart">{{cart.nameVariant}}</mat-cell>
+                                        </ng-container>
+                                        
+                                        <!-- Quantity -->
+                                        <ng-container matColumnDef="quantity">
+                                            <mat-header-cell *matHeaderCellDef>Cantidad</mat-header-cell>
+                                            <mat-cell *matCellDef="let cart">{{cart.quantity}}</mat-cell>
+                                        </ng-container>
+
+                                        <!-- Special Text -->
+                                        <ng-container matColumnDef="specialTxt">
+                                            <mat-header-cell *matHeaderCellDef>Texto Especial</mat-header-cell>
+                                            <mat-cell *matCellDef="let cart">{{cart.specialTxt}}</mat-cell>
+                                        </ng-container>
+
+                                        <!-- DeliveryDate -->
+                                        <ng-container matColumnDef="deliveryDate">
+                                            <mat-header-cell *matHeaderCellDef>Entrega</mat-header-cell>
+                                            <mat-cell *matCellDef="let cart">{{cart.deliveryDate | date: 'dd/MM/yy'}}</mat-cell>
+                                        </ng-container>
+            
+                                        <mat-header-row *matHeaderRowDef="cartDisplayCols"></mat-header-row>
+                                        <mat-row *matRowDef="let row; columns: cartDisplayCols;"></mat-row>
+                                        <tr class="mat-row" *matNoDataRow>
+                                            <td class="mat-cell" colspan="6">No hay productos en los carritos</td>
+                                        </tr>
+                                    </mat-table>
+                                </div>
+                                <mat-paginator [pageSizeOptions]="[15, 30, 50]" showFirstLastButtons></mat-paginator>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                    <!-- Graphics -->
+                    <div class="col s12">
+                        <mat-card>
+                            <mat-card-header class="header-wrap">
+                                <mat-card-title>Ventas Estimadas</mat-card-title>
+                                <mat-card-subtitle>{{today | date: "dd 'de' MMMM 'de' yyyy"}}</mat-card-subtitle>
+                                <div class="flex-end">
+                                    <mat-button-toggle-group [value]="yearSelected" name="yearRange" (change)="onyearChange($event)">
+                                        <mat-button-toggle [value]="2021.1">1° sem 2021</mat-button-toggle>
+                                        <mat-button-toggle [value]="2021.2">2° sem 2021</mat-button-toggle>
+                                    </mat-button-toggle-group>
+                                </div>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <canvas baseChart [datasets]="lineData" [labels]="lineLabels" chartType="line"></canvas>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

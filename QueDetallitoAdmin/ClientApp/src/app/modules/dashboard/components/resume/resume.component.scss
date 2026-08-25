@@ -1,0 +1,73 @@
+.main-card {
+    color: #fff;
+    .mat-card-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 1.4em;
+        h3 {
+            margin: 0;
+        }
+        mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+        }
+    }
+    .card-divider {
+        background: #f3f3f3;
+        width: 100%;
+        height: 1px;
+    }
+    .mat-card-actions {
+        padding: 16px;
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .title {
+                font-size: 0.8em;
+                margin-bottom: 10px;
+            }
+        }
+    }
+    .mat-card-title {
+        font-size: 1.1em;
+    }
+}
+
+.numbers {
+    &:not(:first-child) {
+        border-left: 1px solid rgba(var(--foreground-rgb), 0.20);
+    }
+    padding: 20px 0;
+    text-align: center;
+    h4 {
+        font-size: 1.5em;
+        margin: 0 0 5px;
+        font-weight: 700;
+    }
+    p {
+        font-size: 11px;
+        text-transform: uppercase;
+        margin: 0;
+    }
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+.mat-button-toggle {
+    font-size: 11px;
+}
+.w-95 {
+    width: 95%;
+}
+.mat-column-totalProducts,
+.mat-column-details {
+    max-width: 50px;
+}
+.mat-table {
+    width: 100%;
+    min-width: 450px;
+}

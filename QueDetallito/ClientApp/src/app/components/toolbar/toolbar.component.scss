@@ -1,0 +1,38 @@
+.active {
+    background-color: var(--accent);
+    color: rgb(255,255,255);
+}
+
+button[hidden], a[hidden] {
+    display: none;
+}
+
+.logo-img {
+    width: 8em;
+}
+.logo-img-sm {
+    width: 2em;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.radio-btn {
+    display: flex;
+    flex-direction: column;
+    margin: 15px;
+}
+.f-search {
+    width: 100%;
+    max-width: 500px;
+    font-size: 16px;
+}
+.no-wrap {
+    flex-wrap: nowrap;
+}
+.search-img {
+    vertical-align: middle;
+    margin-right: 8px;
+    width: 28px;
+}

@@ -1,0 +1,236 @@
+<main>
+    <div class="section" *ngIf="!edit">
+        <h2>Variantes de {{nameProduct}}</h2>
+        <div class="space-between">
+            <button mat-button (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon> Regresar a productos
+            </button>
+            <button mat-stroked-button color="priary" (click)="edit = true">Agregar nueva variante</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <ng-container *ngIf="!edit">
+            <div class="space-between">
+                <mat-form-field>
+                    <mat-label>Buscar Variantes</mat-label>
+                    <input matInput type="text" (keyup)="applyFilter($event)">
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+                <button mat-icon-button (click)="getVariants()" matTooltip="Refrescar"><mat-icon>refresh</mat-icon></button>
+            </div>
+            <div class="table-container">
+                <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z2">
+                    <!-- ID -->
+                    <ng-container matColumnDef="id">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                        <mat-cell *matCellDef="let v">{{v.idVariant}}</mat-cell>
+                    </ng-container>
+        
+                    <!-- Name -->
+                    <ng-container matColumnDef="name">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+                        <mat-cell *matCellDef="let v">{{v.nameVariant}}</mat-cell>
+                    </ng-container>
+        
+                    <!-- Stock -->
+                    <ng-container matColumnDef="stock">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header># Stock</mat-header-cell>
+                        <mat-cell *matCellDef="let v">{{v.stock}}</mat-cell>
+                    </ng-container>
+        
+                    <!-- Cost -->
+                    <ng-container matColumnDef="cost">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Costo</mat-header-cell>
+                        <mat-cell *matCellDef="let v">{{v.cost | currency}}</mat-cell>
+                    </ng-container>
+        
+                    <!-- Price -->
+                    <ng-container matColumnDef="price">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Precio</mat-header-cell>
+                        <mat-cell *matCellDef="let v">{{v.price | currency}}</mat-cell>
+                    </ng-container>
+        
+                    <!-- Discount -->
+                    <ng-container matColumnDef="discount">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Descuento</mat-header-cell>
+                        <mat-cell *matCellDef="let v">{{v.discount}}</mat-cell>
+                    </ng-container>
+        
+                    <!-- FinalPrice -->
+                    <ng-container matColumnDef="finalPrice">
+                        <mat-header-cell *matHeaderCellDef>Precio Final</mat-header-cell>
+                        <mat-cell *matCellDef="let v">{{v.finalPrice | currency}}</mat-cell>
+                    </ng-container>
+        
+                    <!-- NextAvailability -->
+                    <ng-container matColumnDef="nextAvailability">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Tiempo Producción</mat-header-cell>
+                        <mat-cell *matCellDef="let v">{{v.nextAvailability}} día(s)</mat-cell>
+                    </ng-container>
+        
+                    <!-- CustomOption -->
+                    <ng-container matColumnDef="customOption">
+                        <mat-header-cell *matHeaderCellDef>Opción Especial</mat-header-cell>
+                        <mat-cell *matCellDef="let v">{{v.custNumber ? 'Número' : (v.custLetter ? 'Letra' : (v.custMessage ? 'Mensaje' : 'N/A'))}}</mat-cell>
+                    </ng-container>
+        
+                    <!-- Created -->
+                    <ng-container matColumnDef="created">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Creado</mat-header-cell>
+                        <mat-cell *matCellDef="let v">{{v.created | date: 'dd/MM/yyyy'}}</mat-cell>
+                    </ng-container>
+        
+                    <!-- Active -->
+                    <ng-container matColumnDef="active">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Activo</mat-header-cell>
+                        <mat-cell *matCellDef="let v"><mat-icon>{{v.active ? 'done' : 'not_interested'}}</mat-icon></mat-cell>
+                    </ng-container>
+        
+                    <!-- Edit -->
+                    <ng-container matColumnDef="edit">
+                        <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+                        <mat-cell *matCellDef="let v">
+                            <button mat-icon-button aria-label="opciones" matTooltip="Opciones" [matMenuTriggerFor]="menu">
+                                <mat-icon>more_horiz</mat-icon>
+                            </button>
+                            <mat-menu #menu="matMenu">
+                                <button mat-menu-item (click)="showImages(v)">
+                                    <mat-icon>collections</mat-icon>&nbsp;Ver/Editar Imágenes
+                                </button>
+                                <button mat-menu-item (click)="editVariant(v)">
+                                    <mat-icon>edit</mat-icon>&nbsp;Editar
+                                </button>
+                                <button mat-menu-item (click)="deleteVariant(v)">
+                                    <mat-icon>delete_forever</mat-icon>&nbsp;Eliminar
+                                </button>
+                            </mat-menu>
+                        </mat-cell>
+                    </ng-container>
+        
+                    <mat-header-row *matHeaderRowDef="displayCols"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayCols"></mat-row>
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell">No existe información para mostrar</td>
+                    </tr>
+                </mat-table>
+            </div>
+    
+            <mat-paginator [pageSizeOptions]="[15, 30, 50]" showFirstLastButtons></mat-paginator>
+        </ng-container>
+
+        <ng-container *ngIf="edit">
+            <h2 *ngIf="!idVariant">Agregar nueva variante de {{nameProduct}}</h2>
+            <h2 *ngIf="idVariant">Actualizar variante de {{nameProduct}}</h2>
+            <form [formGroup]="variantForm" (ngSubmit)="variantSubmit()" enctype="multipart/form-data" class="row-flex">
+                <!-- nameVariant -->
+                <mat-form-field class="col s12 m7">
+                    <mat-label>Nombre de la Variante</mat-label>
+                    <input matInput type="text" minlength="1" maxlength="50" formControlName="nameVariant" autocomplete="off" required>
+                    <mat-hint align="end">{{variantForm.controls.nameVariant.value?.length || 0}} / 50</mat-hint>
+                    <mat-error *ngIf="variantForm.hasError('required', 'nameVariant')">Es requerido</mat-error>
+                </mat-form-field>
+
+                <!-- stock -->
+                <mat-form-field class="col s12 m4 pull-m1">
+                    <mat-label>Stock</mat-label>
+                    <input matInput type="number" min="1" max="254" formControlName="stock" required>
+                    <mat-error *ngIf="variantForm.hasError('required', 'stock')">Es requerido</mat-error>
+                    <mat-error *ngIf="variantForm.hasError('min', 'stock')">El mínimo debe ser 1</mat-error>
+                    <mat-error *ngIf="variantForm.hasError('max', 'stock')">El máximo permitido son 254</mat-error>
+                </mat-form-field>
+
+                <!-- custom price -->
+                <div class="col s12 m8 pull-m4">
+                    <mat-slide-toggle color="primary" formControlName="customPrice" (change)="customPriceChange($event)">
+                        Establecer el precio manualmente
+                    </mat-slide-toggle>
+                </div>
+
+                <!-- cost -->
+                <mat-form-field class="col s12 m4">
+                    <mat-label>Costo</mat-label>
+                    <input matInput type="number" min="1" formControlName="cost" (input)="costChange()" required>
+                    <span matPrefix>$</span>
+                    <mat-error *ngIf="variantForm.hasError('required', 'cost')">Es requerido</mat-error>
+                    <mat-error *ngIf="variantForm.hasError('min', 'cost')">El mínimo debe ser $1.00</mat-error>
+                </mat-form-field>
+
+                <!-- price -->
+                <mat-form-field class="col s12 m4">
+                    <mat-label>Precio</mat-label>
+                    <input matInput type="number" min="1" formControlName="price" required>
+                    <span matPrefix>$</span>
+                    <mat-hint align="start">Ganancia de {{(calculateGain() || 0) | currency}}</mat-hint>
+                    <mat-hint align="end">{{calculateGainPerc() || 0}}%</mat-hint>
+                    <mat-error *ngIf="variantForm.hasError('required', 'price')">Es requerido</mat-error>
+                    <mat-error *ngIf="variantForm.hasError('min', 'price')">El mínimo debe ser $1.00</mat-error>
+                </mat-form-field>
+
+                <!-- discount -->
+                <mat-form-field class="col s12 m4">
+                    <mat-label>Descuento</mat-label>
+                    <input matInput type="number" min="0" max="100" maxlength="3" formControlName="discount" required>
+                    <span matSuffix>%</span>
+                    <mat-hint *ngIf="variantForm.controls.discount.value">Precio Final {{calculateFinalPrice() || 0 | currency}}</mat-hint>
+                    <mat-error *ngIf="variantForm.hasError('required', 'discount')">Es requerido</mat-error>
+                    <mat-error *ngIf="variantForm.hasError('max', 'discount')">El porcentaje máximo es 100%</mat-error>
+                    <mat-error *ngIf="variantForm.hasError('min', 'discount')">El mínimo debe ser 0%</mat-error>
+                </mat-form-field>
+
+                <!-- nextAvailability -->
+                <mat-form-field class="col s12 m4">
+                    <mat-label>Días de Elaboración</mat-label>
+                    <input matInput type="number" min="1" formControlName="nextAvailability" required>
+                    <mat-hint>Número de días anticipados que requiere para elaborarse</mat-hint>
+                    <mat-error *ngIf="variantForm.hasError('required', 'nextAvailability')">Es requerido</mat-error>
+                    <mat-error *ngIf="variantForm.hasError('min', 'nextAvailability')">El mínimo debe ser 1 día</mat-error>
+                </mat-form-field>
+
+                <!-- customOption -->
+                <div class="col s12 m4">
+                    <p>Opciones Especiales</p>
+                    <mat-radio-group formControlName="customOption">
+                        <mat-radio-button [value]="1" class="option">Contiene Número(s)</mat-radio-button>
+                        <mat-radio-button [value]="2" class="option">Contiene Letra(s)</mat-radio-button>
+                        <mat-radio-button [value]="3" class="option">Contiene Mensaje</mat-radio-button>
+                    </mat-radio-group>
+                    <ng-container *ngIf="variantForm.controls.customOption.value">
+                        <button type="button" mat-stroked-button color="warn" (click)="variantForm.patchValue({ customOption: null })">Quitar opción especial</button>
+                    </ng-container>
+                </div>
+
+                <!-- Message Length -->
+                <ng-container *ngIf="variantForm.controls.customOption.value === 3">
+                    <mat-form-field class="col s12 m4">
+                        <mat-label>Tamaño del mensaje</mat-label>
+                        <input type="number" matInput required min="1" formControlName="messageLength">
+                        <mat-hint>Número de caracteres permitidos en el mensaje</mat-hint>
+                        <mat-error *ngIf="variantForm.hasError('required', 'messageLength')">Es requerido</mat-error>
+                        <mat-error *ngIf="variantForm.hasError('min', 'messageLength')">El mínimo es 1</mat-error>
+                    </mat-form-field>
+                </ng-container>
+
+                <!-- active -->
+                <div class="col s12 m4">
+                    <mat-slide-toggle color="primary" formControlName="active">
+                        {{variantForm.controls.active.value ? 'Si' : 'No'}} está activo
+                    </mat-slide-toggle>
+                </div>
+
+                <!-- images -->
+                <div class="col s12 m6 pull-m6">
+                    <label>Subir Imágenes</label>
+                    <input type="file" multiple accept=".webp" formControlName="images" autocomplete="off" (change)="onFileChange($event)" required>
+                    <p class="error-form" *ngIf="variantForm.hasError('required', 'images')">Son requeridas las imágenes</p>
+                </div>
+
+                <!-- Buttons -->
+                <div class="col s12 btn-section">
+                    <button type="submit" mat-raised-button color="primary">Guardar</button>
+                    <button type="reset" mat-raised-button (click)="resetForm()">Cancelar</button>
+                </div>
+            </form>
+        </ng-container>
+    </div>
+</main>

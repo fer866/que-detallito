@@ -1,0 +1,207 @@
+<main>
+    <div class="section" *ngIf="!edit && !reset">
+        <h2>Usuarios Registrados</h2>
+
+        <div *ngIf="!edit">
+            <button mat-stroked-button color="primary" (click)="edit = true">Agregar nuevo usuario</button>
+        </div>
+    </div>
+
+    <div class="section" *ngIf="!edit && !reset">
+        <div class="space-between">
+            <mat-form-field>
+                <mat-label>Buscar Usuarios</mat-label>
+                <input matInput type="text" (keyup)="applyFilter($event)">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+            <button mat-icon-button (click)="getUsers()" matTooltip="Refrescar"><mat-icon>refresh</mat-icon></button>
+        </div>
+        <div class="table-container">
+            <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z2">
+                <!-- ID -->
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                    <mat-cell *matCellDef="let u">{{u.id}}</mat-cell>
+                </ng-container>
+
+                <!-- RoleName -->
+                <ng-container matColumnDef="roleName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Rol</mat-header-cell>
+                    <mat-cell *matCellDef="let u">{{u.roleName}}</mat-cell>
+                </ng-container>
+
+                <!-- FullName -->
+                <ng-container matColumnDef="fullName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Completo</mat-header-cell>
+                    <mat-cell *matCellDef="let u" class="break-word">{{u.fullName}}</mat-cell>
+                </ng-container>
+
+                <!-- Email -->
+                <ng-container matColumnDef="email">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Correo</mat-header-cell>
+                    <mat-cell *matCellDef="let u" class="break-word">{{u.email}}</mat-cell>
+                </ng-container>
+
+                <!-- Phone -->
+                <ng-container matColumnDef="phone">
+                    <mat-header-cell *matHeaderCellDef>Teléfono</mat-header-cell>
+                    <mat-cell *matCellDef="let u">{{u.phone}}</mat-cell>
+                </ng-container>
+
+                <!-- RFC -->
+                <ng-container matColumnDef="rfc">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>RFC</mat-header-cell>
+                    <mat-cell *matCellDef="let u">{{u.rfc}}</mat-cell>
+                </ng-container>
+
+                <!-- LastAccess -->
+                <ng-container matColumnDef="lastAccess">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Último Acceso</mat-header-cell>
+                    <mat-cell *matCellDef="let u">{{u.lastAccess | date: 'dd/MM/yyyy'}}</mat-cell>
+                </ng-container>
+
+                <!-- Active -->
+                <ng-container matColumnDef="active">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Activo</mat-header-cell>
+                    <mat-cell *matCellDef="let u">
+                        <mat-icon>{{u.active ? 'done' : 'not_interested'}}</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Actions -->
+                <ng-container matColumnDef="edit">
+                    <mat-header-cell *matHeaderCellDef>Acciones</mat-header-cell>
+                    <mat-cell *matCellDef="let u">
+                        <button mat-icon-button aria-label="opciones" matTooltip="Opciones" [matMenuTriggerFor]="menu">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item (click)="editUser(u)">
+                                <mat-icon>edit</mat-icon>&nbsp;Editar
+                            </button>
+                            <button mat-menu-item (click)="resetPassword(u)">
+                                <mat-icon>change_circle</mat-icon>&nbsp;Restablecer contraseña
+                            </button>
+                        </mat-menu>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayColumns"></mat-row>
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell">No existe información para mostrar</td>
+                </tr>
+            </mat-table>
+        </div>
+
+        <mat-paginator [pageSizeOptions]="[20, 30, 50]" showFirstLastButtons></mat-paginator>
+    </div>
+
+    <div class="section" *ngIf="edit">
+        <div>
+            <h2>Registrar nuevo usuario</h2>
+        </div>
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data" class="row-flex">
+            <!-- Role -->
+            <mat-form-field class="col s12 m6 pull-m6 l6 pull-l6">
+                <mat-label>Rol</mat-label>
+                <mat-select formControlName="idRole" required>
+                    <mat-option>Selecciona un rol</mat-option>
+                    <mat-option *ngFor="let rol of listRoles | async" [value]="rol.id">{{rol.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="userForm.hasError('required', 'idRole')">Es requerido</mat-error>
+            </mat-form-field>
+
+            <!-- Name -->
+            <mat-form-field class="col s12 m6 l4">
+                <mat-label>Nombre</mat-label>
+                <input type="text" matInput minlength="1" maxlength="50" autocomplete="off" formControlName="name" required>
+                <mat-icon matSuffix>account_circle</mat-icon>
+                <mat-hint>{{userForm.controls.name.value?.length || 0}} / 50</mat-hint>
+                <mat-error *ngIf="userForm.hasError('required', 'name')">Es requerido</mat-error>
+            </mat-form-field>
+
+            <!-- LastName -->
+            <mat-form-field class="col s12 m6 l4">
+                <mat-label>Apellidos</mat-label>
+                <input type="text" matInput minlength="1" maxlength="50" autocomplete="off" formControlName="lastName" required>
+                <mat-hint>{{userForm.controls.lastName.value?.length || 0}} / 50</mat-hint>
+                <mat-error *ngIf="userForm.hasError('required', 'lastName')">Es requerido</mat-error>
+            </mat-form-field>
+
+            <!-- Email -->
+            <mat-form-field class="col s12 m4 l4">
+                <mat-label>Correo</mat-label>
+                <input type="email" matInput minlength="1" maxlength="50" autocomplete="off" formControlName="email" required>
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-error *ngIf="userForm.hasError('required', 'email')">Es requerido</mat-error>
+                <mat-error *ngIf="userForm.hasError('email', 'email')">El correo no es válido</mat-error>
+            </mat-form-field>
+
+            <!-- Phone -->
+            <mat-form-field class="col s12 m4 l4">
+                <mat-label>Teléfono</mat-label>
+                <input type="text" matInput minlength="10" maxlength="10" autocomplete="off" formControlName="phone" required>
+                <mat-icon matSuffix>phone</mat-icon>
+                <mat-hint>A 10 dígitos</mat-hint>
+                <mat-error *ngIf="userForm.hasError('pattern', 'phone')">Sólo se permiten números</mat-error>
+                <mat-error *ngIf="userForm.hasError('required', 'phone')">Es requerido</mat-error>
+            </mat-form-field>
+
+            <!-- RFC -->
+            <mat-form-field class="col s12 m4 l4">
+                <mat-label>RFC</mat-label>
+                <input type="text" matInput minlength="10" maxlength="10" autocomplete="off" formControlName="rfc">
+                <mat-icon matSuffix>assignment_ind</mat-icon>
+                <mat-error *ngIf="userForm.hasError('minlength', 'rfc')">Debe tener mínimo 10 caracteres</mat-error>
+                <mat-error *ngIf="userForm.hasError('minlength', 'rfc')">Se permiten hasta máximo 10 caracteres</mat-error>
+            </mat-form-field>
+
+            <!-- Password -->
+            <ng-container *ngIf="!idUser">
+                <mat-form-field class="col s12 m5 pull-m7 l4">
+                    <mat-label>Contraseña temporal</mat-label>
+                    <input type="text" matInput minlength="8" maxlength="16" autocomplete="off" formControlName="password" required>
+                    <mat-icon matSuffix>lock</mat-icon>
+                    <mat-error *ngIf="userForm.hasError('pattern', 'password')">Debe contener al menos una minúscula, una mayúscula, un número y un caracter especial @$!%*?&+.-_#</mat-error>
+                    <mat-error *ngIf="userForm.hasError('required', 'password')">Es requerido</mat-error>
+                    <mat-error *ngIf="userForm.hasError('minlength', 'password')">Debe tener mínimo 8 caracteres</mat-error>
+                    <mat-error *ngIf="userForm.hasError('maxlength', 'password')">Se permiten hasta máximo 16 caracteres</mat-error>
+                </mat-form-field>
+            </ng-container>
+
+            <!-- Active -->
+            <div class="col s12">
+                <mat-slide-toggle color="primary" formControlName="active">{{userForm.controls.active.value ? 'Si' : 'No'}} está activo</mat-slide-toggle>
+            </div>
+
+            <div class="col s12 btn-section">
+                <button type="submit" mat-raised-button color="primary">Guardar</button>
+                <button type="reset" mat-raised-button (click)="resetForm()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="section" *ngIf="reset">
+        <div>
+            <h2>Cambiar contraseña de usuario</h2>
+        </div>
+        <form class="row-flex" [formGroup]="newPassForm" (ngSubmit)="onResetPassSubmit()" enctype="multipart/form-data">
+            <!-- Password -->
+            <mat-form-field class="col s12 m5 pull-m7 l4 pull-l8">
+                <mat-label>Contraseña temporal</mat-label>
+                <input type="text" matInput minlength="8" maxlength="16" autocomplete="off" formControlName="password" required>
+                <mat-icon matSuffix>lock</mat-icon>
+                <mat-error *ngIf="newPassForm.hasError('pattern', 'password')">Debe contener al menos una minúscula, una mayúscula, un número y un caracter especial @$!%*?&+.-_#</mat-error>
+                <mat-error *ngIf="newPassForm.hasError('required', 'password')">Es requerido</mat-error>
+                <mat-error *ngIf="newPassForm.hasError('minlength', 'password')">Debe tener mínimo 8 caracteres</mat-error>
+                <mat-error *ngIf="newPassForm.hasError('minlength', 'password')">se permite hasta máximo 16 caracteres</mat-error>
+            </mat-form-field>
+
+            <div class="col s12 btn-section">
+                <button type="submit" mat-raised-button color="primary">Guardar</button>
+                <button type="button" mat-raised-button (click)="resetNewPassForm()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</main>

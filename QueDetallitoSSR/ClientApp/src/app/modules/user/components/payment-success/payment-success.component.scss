@@ -1,0 +1,126 @@
+.check-table {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.thead-sm {
+    display: none;
+}
+.tbody-tr-sm {
+    position: relative;
+    display: block;
+    padding: 20px 12px 100px 120px;
+    margin-bottom: 25px;
+    td.thumbnail-image {
+        position: absolute;
+        top: 20px;
+        left: 12px;
+        padding: 0;
+        border-bottom-style: none;
+    }
+    td.title-table {
+        justify-content: flex-start;
+        font-weight: 600;
+        font-size: 16px;
+    }
+    td.action-table {
+        position: absolute;
+        top: 0;
+        right: 12px;
+        border-bottom-style: none;
+    }
+    td {
+        display: flex;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        padding: 7px 0 !important;
+    }
+}
+.product-thumbnail {
+    display: block;
+    max-width: 130px;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    @media only screen and (max-width: 992px) {
+        max-width: 100px;
+    }
+    @media only screen and (max-width: 600px) {
+        max-width: 80px;
+    }
+    img {
+        width: 100%;
+    }
+}
+.check-price {
+    color: var(--warn);
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 500;
+}
+.check-total {
+    color: var(--foreground);
+    font-weight: 600;
+    line-height: 1.2;
+    font-size: 16px;
+    margin-right: 12px;
+}
+.subtotal-section {
+    padding: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.3em;
+    font-weight: 600;
+    color: var(--foreground);
+    span {
+        color: var(--warn);
+    }
+    &.total {
+        font-weight: 800;
+    }
+}
+.img-success {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border: 5px solid var(--background);
+}
+.center-all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+}
+.details {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: 24px;
+    padding: 12px 0;
+    flex-wrap: wrap;
+    & * {
+        margin-top: 8px;
+    }
+}
+.splitter {
+    flex: 1;
+}
+.status-icon {
+    width: 75px;
+}
+.right-side {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    & > * {
+        margin-top: 8px;
+        margin-left: 8px;
+    }
+}
+.gap-left {
+    @media only screen and (min-width: 993px) {
+        padding-left: 24px;
+    }
+}

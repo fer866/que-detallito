@@ -1,0 +1,12 @@
+.mat-table {
+    width: 100%;
+    min-width: 700px;
+}
+.mat-column-id,
+.mat-column-edit {
+    max-width: 50px;
+}
+mat-slide-toggle {
+    display: block;
+    margin: 5px;
+}

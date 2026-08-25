@@ -1,0 +1,165 @@
+<header class="header-medium" aria-label="Inicio">
+    <div class="header-section">
+        <div class="header-headline">
+            <h1><mat-icon>account_circle</mat-icon> Mi Cuenta</h1>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="section" *ngIf="!showSignIn && !showResetPassword && !showResendEmail" [@flyInOut]>
+        <h2 class="login-title">Inicio de sesión con tu cuenta</h2>
+
+        <div class="row-flex">
+            <form class="col s12 m8 pull-m2 push-m2 l6 pull-l3 push-l3 no-m f-w100" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" enctype="multipart/form-data">
+                <!-- Email -->
+                <mat-form-field appearance="fill">
+                    <mat-label>Correo electrónico</mat-label>
+                    <input matInput type="email" formControlName="user" aria-label="email" autocomplete="email">
+                    <mat-error *ngIf="loginForm.hasError('required', 'user')">El correo es requerido</mat-error>
+                </mat-form-field>
+    
+                <!-- Password -->
+                <mat-form-field appearance="fill">
+                    <mat-label>Contraseña</mat-label>
+                    <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" aria-label="password" minlength="8" maxlength="16">
+                    <button mat-icon-button matSuffix aria-label="show/hide" type="button" (click)="showPassword = !showPassword">
+                        <mat-icon>{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                    </button>
+                    <mat-error *ngIf="loginForm.hasError('required', 'password')">La contraseña es requerida</mat-error>
+                    <mat-error *ngIf="loginForm.hasError('minlength', 'password')">Debe contener al menos 8 caracteres</mat-error>
+                    <mat-error *ngIf="loginForm.hasError('maxlength', 'password')">Debe tener máximo 16 caracteres</mat-error>
+                    <mat-error *ngIf="loginForm.hasError('pattern', 'password')">Debe tener al menos una mayúscula, una minúscula y un número</mat-error>
+                </mat-form-field>
+    
+                <!-- Actions -->
+                <div class="space-between m-20">
+                    <span>
+                        <button mat-raised-button type="button" aria-label="olvidé mi contraseña" (click)="showResetPassword = true">Olvidé mi contraseña</button>
+                    </span>
+                    <span>
+                        <button mat-raised-button color="primary" type="button" aria-label="Registarme" (click)="showSignIn = true">¡Quiero Registrarme!</button>
+                    </span>
+                </div>
+    
+                <div class="center">
+                    <button type="submit" mat-raised-button color="accent" [disabled]="loginForm.invalid">Iniciar sesión</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="section" *ngIf="showSignIn" [@flyInOut]>
+        <h2 class="login-title">Soy nuevo y quiero registrarme</h2>
+
+        <div class="row-flex">
+            <div class="col s12 m8 pull-m2 push-m2 l6 pull-l3 push-l3">
+                <form class="row-flex" [formGroup]="signInForm" (ngSubmit)="onSignInSubmit()" enctype="multipart/form-data">
+                    <!-- Name -->
+                    <mat-form-field appearance="fill" class="col s12 m6 no-m">
+                        <mat-label>Nombre</mat-label>
+                        <input matInput type="text" formControlName="name" aria-label="Nombre" autocomplete="given-name" required>
+                        <mat-error *ngIf="signInForm.hasError('required', 'name')">El nombre es requerido</mat-error>
+                    </mat-form-field>
+        
+                    <!-- Last Name -->
+                    <mat-form-field appearance="fill" class="col s12 m6 no-m">
+                        <mat-label>Apellidos</mat-label>
+                        <input matInput type="text" formControlName="lastName" aria-label="Apellidos" autocomplete="family-name" required>
+                        <mat-error *ngIf="signInForm.hasError('required', 'lastName')">El apellido es requerido</mat-error>
+                    </mat-form-field>
+        
+                    <!-- Email -->
+                    <mat-form-field appearance="fill" class="col s12 no-m">
+                        <mat-label>Correo electrónico</mat-label>
+                        <input matInput type="email" formControlName="email" aria-label="email" autocomplete="email" required>
+                        <mat-error *ngIf="signInForm.hasError('required', 'email')">El correo es requerido</mat-error>
+                        <mat-error *ngIf="signInForm.hasError('email', 'email')">El correo tiene formato incorrecto</mat-error>
+                    </mat-form-field>
+        
+                    <!-- Password -->
+                    <mat-form-field appearance="fill" class="col s12">
+                        <mat-label>Contraseña</mat-label>
+                        <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="password" aria-label="contraseña" autocomplete="new-password" required minlength="8" maxlength="16">
+                        <button mat-icon-button matSuffix aria-label="show/hide" type="button" (click)="showPassword = !showPassword">
+                            <mat-icon>{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                        </button>
+                        <mat-hint>Debe tener al menos una mayúscula, una minúscula y un número</mat-hint>
+                        <mat-error *ngIf="signInForm.hasError('required', 'password')">La contraseña es requerida</mat-error>
+                        <mat-error *ngIf="signInForm.hasError('minlength', 'password')">Debe contener al menos 8 caracteres</mat-error>
+                        <mat-error *ngIf="signInForm.hasError('maxlength', 'password')">Debe tener máximo 16 caracteres</mat-error>
+                        <mat-error *ngIf="signInForm.hasError('pattern', 'password')">Debe tener al menos una mayúscula, una minúscula y un número</mat-error>
+                    </mat-form-field>
+        
+                    <!-- Repeat Password -->
+                    <mat-form-field appearance="fill" class="col s12">
+                        <mat-label>Repetir contraseña</mat-label>
+                        <input matInput [type]="showPassword ? 'text' : 'password'" formControlName="repeatPassword" aria-label="repetir contraseña" autocomplete="new-password" required>
+                        <mat-hint>Asegúrate de escribir la misma contraseña que la anterior</mat-hint>
+                        <mat-error *ngIf="signInForm.hasError('required', 'repeatPassword')">La repetición de contraseña es requerida</mat-error>
+                        <mat-error *ngIf="signInForm.hasError('notSame')">La contraseña no coincide con la anterior</mat-error>
+                    </mat-form-field>
+        
+                    <!-- Privacy Agreement -->
+                    <div class="col s12">
+                        <mat-checkbox formControlName="noticePrivacy" aria-label="Aviso de privacidad" color="accent">
+                            <span class="chk-wrap">
+                                Doy mi consentimiento de haber leido y estar de acuerdo con el&nbsp;
+                                <a target="_blank" routerLink="/about" fragment="privacy"><strong>Aviso de Privacidad</strong></a>&nbsp;
+                                y los&nbsp;
+                                <a target="_blank" routerLink="/about" fragment="terms"><strong>Términos y Condiciones</strong></a>&nbsp;
+                                del servicio.
+                            </span>
+                        </mat-checkbox>
+                        <span class="error-label" *ngIf="signInForm.hasError('requiredTrue', 'noticePrivacy')">Debes aceptar el aviso de privacidad</span>
+                    </div>
+        
+                    <div class="center btn-section">
+                        <button type="submit" mat-raised-button color="accent" [disabled]="signInForm.invalid">Registrarme</button>
+                        <button type="button" mat-raised-button (click)="resetSignIn()">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" *ngIf="showResetPassword" [@flyInOut]>
+        <h2 class="login-title">Recuperar contraseña</h2>
+
+        <div class="row-flex">
+            <form class="col s12 m8 pull-m2 push-m2 l6 push-l3 pull-l3 f-w100" [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()" enctype="multipart/form-data">
+                <mat-form-field appearance="fill">
+                    <mat-label>Correo electrónico registrado</mat-label>
+                    <input matInput type="email" formControlName="user" aria-label="email" autocomplete="email" required>
+                    <mat-error *ngIf="forgotPasswordForm.hasError('required', 'user')">El correo es requerido</mat-error>
+                    <mat-error *ngIf="forgotPasswordForm.hasError('email', 'user')">El correo tiene formato incorrecto</mat-error>
+                </mat-form-field>
+
+                <div class="center btn-section">
+                    <button type="submit" mat-raised-button color="accent" [disabled]="forgotPasswordForm.invalid">Recuperar contraseña</button>
+                    <button type="button" mat-raised-button (click)="cancelForgotPassword()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="section" *ngIf="showResendEmail" [@flyInOut]>
+        <h2 class="login-title">Confirmar Correo</h2>
+        <div class="row-flex">
+            <div class="col s12 m8 push-m2 pull-m2 l6 push-l3 pull-l3">
+                <mat-card>
+                    <mat-card-content>
+                        <p>Hemos enviado un correo a <strong>{{resendEmail}}</strong> para que confirmes que es tuyo.</p>
+                        <p>Si no lo has recibido y tampoco está en tu bandeja de SPAM, puedes solicitar que te lo volvamos a enviar</p>
+                        <div class="center">
+                            <button mat-raised-button color="accent" (click)="onResendEmail()">Reenviar correo</button>
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-button (click)="cancelResendEmail()">regresar</button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</main>

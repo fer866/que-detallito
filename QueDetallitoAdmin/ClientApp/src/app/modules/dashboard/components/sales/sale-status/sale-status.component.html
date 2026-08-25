@@ -1,0 +1,42 @@
+<h1 mat-dialog-title>Cambiar estatus de la orden #{{data.idOrder}} del {{data.orderYear}}</h1>
+
+<div mat-dialog-content>
+    <p>Esta acción enviará correo electrónico al cliente.</p>
+    <p>Estatus actual: <strong>{{data.orderStatus}}</strong></p>
+    <form [formGroup]="statusForm" enctype="multipart/form-data">
+        <!-- Id Status -->
+        <mat-form-field>
+            <mat-label>Estatus</mat-label>
+            <mat-select formControlName="idStatus" required cdkFocusInitial (selectionChange)="idStatusChange($event.value)">
+                <mat-option *ngFor="let stat of listStatus | async" [value]="stat.id">{{stat.name}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="statusForm.hasError('required', 'idStatus')">Debes seleccionar un estatus</mat-error>
+        </mat-form-field>
+
+        <!-- Payment Cancelation -->
+        <ng-container *ngIf="statusForm.controls.idStatus.value === 2">
+            <mat-form-field hintLabel="No. generado en Stripe o Paypal">
+                <mat-label>No. Cancelación</mat-label>
+                <input type="text" matInput required minlength="3" maxlength="100" formControlName="paymentCancelation">
+                <mat-hint align="end">{{statusForm.controls.paymentCancelation.value?.length || 0}} / 100</mat-hint>
+                <mat-error *ngIf="statusForm.hasError('required', 'paymentCancelation')">Es requerido</mat-error>
+                <mat-error *ngIf="statusForm.hasError('maxLength', 'paymentCancelation')">Máximo 100 caracteres</mat-error>
+                <mat-error *ngIf="statusForm.hasError('minLength', 'paymentCancelation')">Mínimo 3 caracteres</mat-error>
+            </mat-form-field>
+        </ng-container>
+
+        <!-- Remark -->
+        <mat-form-field hintLabel="Cualquier observación del estatus">
+            <mat-label>Observaciones</mat-label>
+            <textarea matInput rows="3" maxlength="200" formControlName="remark"></textarea>
+            <mat-hint align="end">{{statusForm.controls.remark.value?.length || 0}} / 200</mat-hint>
+            <mat-error *ngIf="statusForm.hasError('required', 'remark')">Es requerido</mat-error>
+            <mat-error *ngIf="statusForm.hasError('maxLength', 'remark')">Sólo se permiten hasta 200 caracteres</mat-error>
+        </mat-form-field>
+    </form>
+</div>
+
+<div mat-dialog-actions>
+    <button mat-button color="primary" [disabled]="statusForm.invalid" (click)="onStatusSubmit()">Cambiar estatus</button>
+    <button mat-button mat-dialog-close>Cancelar</button>
+</div>

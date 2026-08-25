@@ -1,0 +1,40 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+
+<div mat-dialog-content>
+    <ng-container *ngIf="!edit">
+        <div class="row-flex images-section">
+            <div class="col s6 m4" *ngFor="let img of listProductImage | async">
+                <div class="img-container">
+                    <button mat-icon-button matTooltip="Eliminar" (click)="deleteImage(img)">
+                        <mat-icon>remove_circle</mat-icon>
+                    </button>
+                    <img [alt]="img.noImage" [src]="img.urlLocation" aria-label="imagen">
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="edit">
+        <form [formGroup]="imageForm" (ngSubmit)="imageSubmit()" enctype="multipart/form-data" class="row-flex">
+            <div class="col 12 m7 pull-m5">
+                <label>Subir una sola imágen</label>
+                <input type="file" accept=".webp" formControlName="images" (change)="onFileChange($event)" required>
+                <span *ngIf="imageForm.hasError('required', 'images') && (imageForm.touched || imageForm.dirty)">Son requeridas las imágenes</span>
+            </div>
+
+            <div class="col s12 btn-section">
+                <button type="submit" mat-raised-button color="primary">Guardar</button>
+                <button type="reset" mat-raised-button (click)="resetForm()">Cancelar</button>
+            </div>
+        </form>
+    </ng-container>
+</div>
+
+<div mat-dialog-actions class="justify-space">
+    <ng-container *ngIf="!edit">
+        <button mat-button color="primary" aria-label="agregar" (click)="edit = true">
+            <mat-icon>add_photo_alternate</mat-icon> Nueva imagen
+        </button>
+    </ng-container>
+    <button mat-button mat-dialog-close cdkFocusInitial>Cerrar</button>
+</div>
